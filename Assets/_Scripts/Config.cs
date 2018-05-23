@@ -9,10 +9,10 @@ public class Config{
 
     static public void init()
     {
+        ValenceTable.Add("C", new List<int> { 0, 2, 4 });
         ValenceTable.Add("H", new List<int> { -1, 0, 1 });
         ValenceTable.Add("O", new List<int> { 0, -2 });
         ValenceTable.Add("N", new List<int> { 0, 1, 2, 3, 4, -3 });
-        ValenceTable.Add("C", new List<int> { 0, 2, 4 });
         ValenceTable.Add("P", new List<int> { 0, 3, 5, -3 });
         ValenceTable.Add("S", new List<int> { -2, 0, 2, 4, 6 });
         ValenceTable.Add("Si", new List<int> { 0, 2, 4 });
