@@ -15,6 +15,8 @@ public class Atom {
     public Vector3 Color { set; get; }
     public List<Vector4> vbonds;
 
+    public static int CurrentId = 0;
+
     public Atom()
     {
         vbonds = new List<Vector4>();
@@ -145,4 +147,28 @@ public class Bromine : Atom
         Id = _Id;
     }
 
+}
+
+public class AtomFactory
+{
+    public static Atom GetAtom(string atomSymbol, int valence)
+    {
+        
+        int id = Atom.CurrentId++;
+        if (atomSymbol == "C")
+        {
+            
+            return new Carbon(valence, id);
+        }
+        else if (atomSymbol == "H")
+        {
+            return new Hydrogen(valence, id);
+        }
+        else if (atomSymbol == "O")
+        {
+            return new Oxygen(valence, id);
+        }
+
+        return null;
+    }
 }
