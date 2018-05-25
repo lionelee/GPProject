@@ -10,8 +10,13 @@ public enum BondType
 public class Bond{
     public int A1 { get; set; }
     public int A2 { get; set; }
-
     public BondType Type { get; set; }
+	
+	public Bond(int a1, int a2)
+    {
+        A1 = a1;
+        A2 = a2;
+    }
 }
 
 
