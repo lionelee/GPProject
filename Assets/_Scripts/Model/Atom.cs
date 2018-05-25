@@ -20,6 +20,7 @@ public class Atom {
 
     public Atom()
     {
+        Connected = 0;
         vbonds = new List<Vector4>();
     }
 	
@@ -44,7 +45,7 @@ public class Atom {
 			if (v.w == 0)
 				return new Vector3 (v.x, v.y, v.z);
 		}
-        return new Vector3(null, null, null);
+        return new Vector3(-1, -1, -1);
 	}
     
 }

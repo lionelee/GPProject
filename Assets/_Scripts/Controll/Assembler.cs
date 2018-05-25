@@ -13,7 +13,7 @@ public class Assembler : MonoBehaviour {
 	}
 
 	public void Connnect(int id1, int id2){
-		Molecule m = GameManager.molecule;
+        Molecule m = GameManager.curMolecule;
 		Atom a1 = m.getAtomById (id1);
 		Atom a2 = m.getAtomById (id2);
         if(a1.Connected == a1.Valence || a2.Connected == a2.Valence)
@@ -37,9 +37,7 @@ public class Assembler : MonoBehaviour {
 
 		Vector4 vec1, vec2;
 		vec1 = a1.getAngle ();
-		vec2 = a2.getAngle ();
-
-
+        vec2 = a2.getAngle ();
 
 	}
 
