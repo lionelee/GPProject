@@ -6,9 +6,11 @@ public class Config{
 
     static public Dictionary<string, List<int>> ValenceTable = new Dictionary<string, List<int>>();
     static public Dictionary<string, List<Vector3>> BondAngleTable = new Dictionary<string, List<Vector3>>();
+    static public Dictionary<string[], float> BondLengthTable = new Dictionary<string[], float>();
 
     static public void Init()
     {
+        // initialize valence table
         ValenceTable.Add("C", new List<int> { 0, 2, 4 });
         ValenceTable.Add("H", new List<int> { -1, 0, 1 });
         ValenceTable.Add("O", new List<int> { -2, 0 });
@@ -20,9 +22,18 @@ public class Config{
         ValenceTable.Add("F", new List<int> { -1, 0, 1, 2, 3, 4, 5, 6, 7 });
         ValenceTable.Add("Br", new List<int> { -1, 0, 1, 2, 3, 4, 5, 6, 7 });
 
-        BondAngleTable.Add("C", new List<Vector3> { new Vector3() });
-        BondAngleTable.Add("H", new List<Vector3> { new Vector3() });
-        BondAngleTable.Add("O", new List<Vector3> { new Vector3() });
+        // initialize bond angle table
+        BondAngleTable.Add("C", new List<Vector3> { new Vector3(1f,0f,0f), new Vector3(-0.334f,0.943f,0f), 
+            new Vector3(-0.334f,-0.472f,0.817f), new Vector3(-0.334f,-0.472f,-0.817f)});
+        BondAngleTable.Add("H", new List<Vector3> { new Vector3(1f,0f,0f)});
+        BondAngleTable.Add("O", new List<Vector3> { new Vector3(1f,0f,0f), new Vector3(-0.259f,0f,0.966f)});
+
+        // initialize bond length table
+		BondLengthTable.Add(new string[]{"C","C"}, 1.512f);
+		BondLengthTable.Add(new string[]{"C","H"}, 1.096f);
+		BondLengthTable.Add(new string[]{"C","O"}, 1.427f);
+		BondLengthTable.Add(new string[]{"O","O"}, 1.516f);
+		BondLengthTable.Add(new string[]{"O","H"}, 0.956f);
 
     }
 }

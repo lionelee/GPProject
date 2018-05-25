@@ -23,6 +23,11 @@ public class Molecule{
     {
         atoms.Add(a);
     }
+	
+	public void addBond(Bond b)
+	{
+		bonds.Add (b);
+	}
 
     public Atom getAtomById(int id)
     {
