@@ -4,14 +4,19 @@ using UnityEngine;
 
 public class Molecule{
 
+    
+    public int Id { set; get; }
+    public int CurrentAtomId { set; get; }
 
     List<Atom> atoms;
     List<Bond> bonds;
      
-    public Molecule()
+    public Molecule(int id)
     {
         atoms = new List<Atom>();
         bonds = new List<Bond>();
+        CurrentAtomId = 0;
+        Id = id;
     }
 
     public void addAtom(Atom a)
