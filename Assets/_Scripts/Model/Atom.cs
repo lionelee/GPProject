@@ -5,7 +5,7 @@ using UnityEngine;
 public class Atom {
 
     //max size is 117 scale 0.6
-    const float scale = 1.0f;
+    //const float scale = 1.0f;
 
     public int Id { set; get; }
 
