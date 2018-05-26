@@ -9,11 +9,16 @@ public class MoleculesAction : VRTK_InteractableObject
     public override void Grabbed(VRTK_InteractGrab grabbingObject)
     {
         base.Grabbed(grabbingObject);
+		/*grabbingObject.gameObject.GetComponent<RotateController> ().SetMolecule (gameObject);
+		gameObject.GetComponent<Rotator> ().enabled = true;
+		gameObject.GetComponent<Rotator> ().reset ();*/
     }
 
     public override void Ungrabbed(VRTK_InteractGrab previousGrabbingObject)
     {
         base.Ungrabbed(previousGrabbingObject);
+		/*gameObject.GetComponent<Rotator> ().enabled = false;
+		previousGrabbingObject.gameObject.GetComponent<RotateController> ().RemoveMolecule ();*/
         if (GameManager.MoleculeInBuildArea(gameObject))
         {
             print("in build area");
@@ -25,6 +30,11 @@ public class MoleculesAction : VRTK_InteractableObject
         }
 
     }
+
+	/*void DoTouchpadAxisChanged(object sender, ControllerInteractionEventArgs e){
+		gameObject.GetComponent<Rotator> ().SetTouchAxis (e.touchpadAxis);
+	}*/
+
     public override void StartUsing(VRTK_InteractUse usingObject)
     {
         print("use molecule");

@@ -39,7 +39,8 @@ public class GameManager : MonoBehaviour {
     {
         //as new
         //buildArea.gameObject.
-        mole.transform.parent = buildArea.gameObject.transform;
+        //mole.transform.parent = buildArea.gameObject.transform;
+		mole.transform.SetParent(buildArea.transform, true);
         //component.transform.SetParent(blob.transform, false);
 
         //or add to it    
@@ -94,7 +95,8 @@ public class GameManager : MonoBehaviour {
         GameObject prefebMole = (GameObject)Resources.Load("_Prefebs/Molecule") as GameObject;
         GameObject mole = Instantiate(prefebMole);
         mole.GetComponent<ComponentInformation>().Id = molecule.Id;
-        mole.transform.parent = newComponentPos.transform;
+        //mole.transform.parent = newComponentPos.transform;
+		mole.transform.SetParent (newComponentPos.transform, true);
         mole.transform.Translate(newComponentPos.transform.position - mole.transform.position);
 
         GameObject prefebAtom;
@@ -119,7 +121,8 @@ public class GameManager : MonoBehaviour {
         }
 
         GameObject generatedAtom = Instantiate(prefebAtom);
-        generatedAtom.transform.parent = mole.transform;
+        //generatedAtom.transform.parent = mole.transform;
+		generatedAtom.transform.SetParent(mole.transform, true);
         generatedAtom.transform.Translate(mole.transform.position-generatedAtom.transform.position);
 
         generatedAtom.GetComponent<ComponentInformation>().Id = atom.Id;
