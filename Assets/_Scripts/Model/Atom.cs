@@ -57,6 +57,7 @@ public class Hydrogen : Atom
         Symbol = "H";
         Valence = _Valence;
         Id = _Id;
+        vbonds = Config.BondAngleTable["H"];
     }
 }
 
@@ -67,6 +68,7 @@ public class Oxygen : Atom
         Symbol = "O";
         Valence = _Valence;
         Id = _Id;
+        vbonds = Config.BondAngleTable["O"];
     }
 }
 
@@ -77,6 +79,7 @@ public class Carbon : Atom
         Symbol = "C";
         Valence = _Valence;
         Id = _Id;
+        vbonds = Config.BondAngleTable["C"];
     }
 }
 

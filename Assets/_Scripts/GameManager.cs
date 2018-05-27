@@ -11,7 +11,8 @@ public class GameManager : MonoBehaviour {
     public GameObject newComponentPos;
 
     static Collider buildArea;
-    public static Molecule curMolecule;
+    static public Molecule curMolecule;
+    static public List<GameObject> objs;
     static List<Molecule> molecules;
     Atom selectedAtom;
     int currentMoleId;
