@@ -55,4 +55,13 @@ public class MoleculesAction : VRTK_InteractableObject
         }
     }
 
+    public void RemoveAtomsAction()
+    {
+        for (int i = 0; i < gameObject.transform.childCount; i++)
+        {
+            GameObject child = gameObject.transform.GetChild(i).gameObject;
+            DestroyObject(child.GetComponent<AtomsAction>());
+        }
+    }
+
 }

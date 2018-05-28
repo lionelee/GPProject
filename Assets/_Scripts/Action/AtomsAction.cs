@@ -39,7 +39,7 @@ public class AtomsAction : VRTK_InteractableObject
     IEnumerator CountDown()
     {
         yield return new WaitForSeconds(0.2f);
-        DestroyObject(gameObject.GetComponent<AtomsAction>());
+        gameObject.GetComponentInParent<MoleculesAction>().RemoveAtomsAction();
     }
     private void DoSomething()
     {
