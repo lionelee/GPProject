@@ -6,8 +6,6 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour {
 
-
-
     public GameObject newComponentPos;
 
     static Collider buildArea;
@@ -101,7 +99,6 @@ public class GameManager : MonoBehaviour {
         GameObject prefebAtom;
         if (symbol == "C")
         {
-            Debug.Log("here");
             prefebAtom = (GameObject)Resources.Load("_Prefebs/Carbon") as GameObject;
             Debug.Log(prefebAtom == null);
         }

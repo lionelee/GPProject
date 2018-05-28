@@ -32,7 +32,6 @@ public class MoleculesAction : VRTK_InteractableObject
         gameObject.GetComponent<Collider>().enabled = false;
         for (int i = 0; i < gameObject.transform.childCount; i++)
             gameObject.transform.GetChild(i).gameObject.GetComponent<Collider>().enabled = true;
-
     }
 
 }
