@@ -3,8 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using VRTK;
 
+
+
+
 public class MoleculesAction : VRTK_InteractableObject
 {
+
+    private Color selectedColor = new Color(26 / 255.0f, 160 / 255.0f, 1, 0);
 
     public override void Grabbed(VRTK_InteractGrab grabbingObject)
     {
@@ -39,10 +44,15 @@ public class MoleculesAction : VRTK_InteractableObject
     {
         print("use molecule");
         base.StartUsing(usingObject);
-        gameObject.GetComponent<Collider>().enabled = false;
+        List<GameObject> list = GetTouchingObjects();
+        print(list[0].GetComponent<VRTK_InteractTouch>().GetTouchedObject());
         for (int i = 0; i < gameObject.transform.childCount; i++)
-            gameObject.transform.GetChild(i).gameObject.GetComponent<Collider>().enabled = true;
-
+        {
+            GameObject child = gameObject.transform.GetChild(i).gameObject;
+            child.AddComponent<AtomsAction>();
+            child.GetComponent<AtomsAction>().touchHighlightColor = selectedColor;
+            child.GetComponent<AtomsAction>().isUsable = true;
+        }
     }
 
 }

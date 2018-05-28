@@ -21,9 +21,9 @@ GameObject:
   - component: {fileID: 4764044824072552}
   - component: {fileID: 114928710688376152}
   - component: {fileID: 114278475253106670}
-  - component: {fileID: 54860424541539292}
-  - component: {fileID: 135358300777493000}
   - component: {fileID: 114226112626609888}
+  - component: {fileID: 114102497767978806}
+  - component: {fileID: 54916806765920812}
   m_Layer: 0
   m_Name: Molecule
   m_TagString: Component
@@ -44,7 +44,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!54 &54860424541539292
+--- !u!54 &54916806765920812
 Rigidbody:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -59,6 +59,25 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &114102497767978806
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1594423098900344}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8afa0b205791c9f4496bf2814aeac078, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  precisionGrab: 1
+  rightSnapHandle: {fileID: 0}
+  leftSnapHandle: {fileID: 0}
+  throwVelocityWithAttachDistance: 0
+  throwMultiplier: 1
+  onGrabCollisionDelay: 0
+  destroyImmediatelyOnThrow: 1
+  breakForce: 1500
 --- !u!114 &114226112626609888
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -94,7 +113,7 @@ MonoBehaviour:
   validDrop: 1
   grabOverrideButton: 0
   allowedGrabControllers: 0
-  grabAttachMechanicScript: {fileID: 0}
+  grabAttachMechanicScript: {fileID: 114102497767978806}
   secondaryGrabActionScript: {fileID: 0}
   isUsable: 1
   holdButtonToUse: 1
@@ -114,15 +133,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5dae15cec20b5e4d8f338b66271a6d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!135 &135358300777493000
-SphereCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1594423098900344}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}

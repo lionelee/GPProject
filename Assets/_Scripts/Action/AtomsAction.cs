@@ -8,14 +8,41 @@ using VRTK;
 public class AtomsAction : VRTK_InteractableObject
 {
 
+
+        //touchHighlightColor = new Color(26, 160, 255, 0);
+        //isUsable = true;
+
+
     public override void StartUsing(VRTK_InteractUse usingObject)
     {
-        print("use molecule");
+
         base.StartUsing(usingObject);
+        DoSomething();
+    }
+
+    public override void StopUsing(VRTK_InteractUse usingObject)
+    {
+
+        base.StopUsing(usingObject);
+        //usingObject.ForceStopUsing();
+        //ForceStopInteracting();
+        
+
+        disableWhenIdle = false;
+        enabled = false;
+        
+        
+        StartCoroutine(CountDown());
+        
+    }
+
+    IEnumerator CountDown()
+    {
+        yield return new WaitForSeconds(0.2f);
+        DestroyObject(gameObject.GetComponent<AtomsAction>());
+    }
+    private void DoSomething()
+    {
         print("atom id: " + gameObject.GetComponent<ComponentInformation>().Id);
-
-        gameObject.GetComponent<SphereCollider>().enabled = false;
-        gameObject.transform.parent.gameObject.GetComponent<SphereCollider>().enabled = true;
-
     }
 }
