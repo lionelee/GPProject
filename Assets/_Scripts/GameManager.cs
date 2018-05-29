@@ -6,14 +6,14 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour {
 
-    public GameObject newComponentPos;
+    //public GameObject newComponentPos;
 
     static Collider buildArea;
     static public Molecule curMolecule;
     static public List<GameObject> objs;
     static List<Molecule> molecules;
-    Atom selectedAtom;
-    int currentMoleId;
+    static GameObject selectedComponent;
+    static int currentMoleId;
 
 
 	// Use this for initialization
@@ -55,11 +55,25 @@ public class GameManager : MonoBehaviour {
         }
     }
 
-    public Atom GetSelectedAtom()
+    public static void RemoveAtom(GameObject atom)
     {
-        return null;
+        
     }
 
+    public static GameObject GetSelectedComponent()
+    {
+        return selectedComponent;
+    }
+
+    public static void SetSelectedComponent(GameObject component)
+    {
+        selectedComponent = component;
+    }
+
+    public static void CancelComponentSelected()
+    {
+        selectedComponent = null;
+    }
 
     /// <summary>
     /// Generate an atom model to the ray pointer,
@@ -68,8 +82,9 @@ public class GameManager : MonoBehaviour {
     /// <param name="symbol"></param>
     /// <param name="valence"></param>
 
-    public void GenerateAtom(string symbol, int valence)
+    public static void GenerateAtom(string symbol, int valence)
     {
+        GameObject newComponentPos = GameObject.FindGameObjectWithTag("NewComponentPos");
         // clear atoms in component area
         for (int i = 0; i < newComponentPos.transform.childCount; i++)
             DestroyObject(newComponentPos.transform.GetChild(i).gameObject);

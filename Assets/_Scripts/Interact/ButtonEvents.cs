@@ -44,13 +44,31 @@ public class ButtonEvents : MonoBehaviour {
         int valence = int.Parse(button.GetComponentInChildren<Text>().text);
         string symbol = valenceCanvas.GetComponent<Text>().text;
 
-        GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>().GenerateAtom(symbol, valence);
+        GameManager.GenerateAtom(symbol, valence);
 
     }
 
     public void OnCanvasCloseButtonClick(GameObject canvas)
     {
-        valenceCanvas.SetActive(false);
+        
         canvas.SetActive(false);
+        string name = canvas.name;
+
+        if(name == "SelectAtomCanvas")
+        {
+            valenceCanvas.SetActive(false);
+        } else if(name == "ComponentOperationCanvas")
+        {
+
+        }
+    }
+
+    public void OnDeleteComponentButtonClick()
+    {
+        GameObject selected = GameManager.GetSelectedComponent();
+
+        //just delete
+        GameManager.RemoveAtom(selected);
+        Destroy(selected);
     }
 }
