@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Molecule{
-
-    
+public class Molecule : MonoBehaviour
+{    
     public int Id { set; get; }
     public int CurrentAtomId { set; get; }
 

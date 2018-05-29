@@ -28,6 +28,7 @@ public class AtomsAction : VRTK_InteractableObject
         //ForceStopInteracting();
         
 
+
         disableWhenIdle = false;
         enabled = false;
         
@@ -43,6 +44,6 @@ public class AtomsAction : VRTK_InteractableObject
     }
     private void DoSomething()
     {
-        print("atom id: " + gameObject.GetComponent<ComponentInformation>().Id);
+        print("atom id: " + gameObject.GetComponent<Atom>().Id);
     }
 }

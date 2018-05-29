@@ -6,12 +6,11 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour {
 
-
-
     public GameObject newComponentPos;
 
     static Collider buildArea;
-    public static Molecule curMolecule;
+    static public Molecule curMolecule;
+    static public List<GameObject> objs;
     static List<Molecule> molecules;
     Atom selectedAtom;
     int currentMoleId;
@@ -48,25 +47,12 @@ public class GameManager : MonoBehaviour {
 
     public static void RemoveMolecule(GameObject mole)
     {
-        int moleId = mole.GetComponent<ComponentInformation>().Id;
-        foreach(Molecule m in molecules)
-        {
-            if(m.Id == moleId)
-            {
-                molecules.Remove(m);
-            }
-        }
-
         Destroy(mole);
-        /*molecule.deleteAtomById(int.Parse(component.GetComponent<Text>().text));
-        if(component.transform.parent.gameObject.name == "blob" && component.transform.parent.childCount == 1)
+        GameObject[] atoms = mole.GetComponentsInChildren<GameObject>();
+       foreach(GameObject atom in atoms)
         {
-            Destroy(component.transform.parent.gameObject);
-        } else
-        {
-            Destroy(component);
-        }*/
-
+            Destroy(atom);
+        }
     }
 
     public Atom GetSelectedAtom()
@@ -84,53 +70,43 @@ public class GameManager : MonoBehaviour {
 
     public void GenerateAtom(string symbol, int valence)
     {
-        //Atom and Molecule
-        Molecule molecule = new Molecule(currentMoleId++);
-        Atom atom = AtomFactory.GetAtom(symbol, valence, molecule.CurrentAtomId++);
-        molecule.addAtom(atom);
-        molecules.Add(molecule);
-        //model
+        // clear atoms in component area
         for (int i = 0; i < newComponentPos.transform.childCount; i++)
             DestroyObject(newComponentPos.transform.GetChild(i).gameObject);
 
         GameObject prefebMole = (GameObject)Resources.Load("_Prefebs/Molecule") as GameObject;
         GameObject mole = Instantiate(prefebMole);
-        mole.GetComponent<ComponentInformation>().Id = molecule.Id;
-        //mole.transform.parent = newComponentPos.transform;
-		mole.transform.SetParent (newComponentPos.transform, true);
+
+        Molecule molecule = mole.AddComponent<Molecule>();
+        molecule.Id = currentMoleId++;      
+        mole.transform.parent = newComponentPos.transform;
         mole.transform.Translate(newComponentPos.transform.position - mole.transform.position);
 
         GameObject prefebAtom;
         if (symbol == "C")
         {
-            Debug.Log("here");
             prefebAtom = (GameObject)Resources.Load("_Prefebs/Carbon") as GameObject;
-            Debug.Log(prefebAtom == null);
         }
         else if (symbol == "H")
         {
             prefebAtom = (GameObject)Resources.Load("_Prefebs/Hydrogen") as GameObject;
 
         }
-        else if(symbol == "O")
+        else if (symbol == "O")
         {
             prefebAtom = (GameObject)Resources.Load("_Prefebs/Oxygen") as GameObject;
         }
-        else
-        {
-            prefebAtom = null;
-        }
+        else return;
 
         GameObject generatedAtom = Instantiate(prefebAtom);
-        //generatedAtom.transform.parent = mole.transform;
-		generatedAtom.transform.SetParent(mole.transform, true);
+
+        Atom atom = prefebAtom.AddComponent<Atom>();
+        atom.Id = molecule.CurrentAtomId++;
+        atom.Symbol = symbol;
+        atom.Valence = valence;
+        atom.vbonds  = Config.BondAngleTable[symbol];
+        generatedAtom.transform.parent = mole.transform;
         generatedAtom.transform.Translate(mole.transform.position-generatedAtom.transform.position);
-
-        generatedAtom.GetComponent<ComponentInformation>().Id = atom.Id;
-
-        //scale molecule's collider to fit the atom
-        //mole.GetComponent<SphereCollider>().radius *= generatedAtom.transform.lossyScale.x;
-        //CopyAtomCollider(generatedAtom, mole);
     }
 
 }
