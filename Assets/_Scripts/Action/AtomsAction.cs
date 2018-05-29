@@ -8,11 +8,6 @@ using VRTK;
 public class AtomsAction : VRTK_InteractableObject
 {
 
-
-        //touchHighlightColor = new Color(26, 160, 255, 0);
-        //isUsable = true;
-
-
     public override void StartUsing(VRTK_InteractUse usingObject)
     {
 

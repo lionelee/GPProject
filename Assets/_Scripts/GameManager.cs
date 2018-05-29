@@ -100,7 +100,7 @@ public class GameManager : MonoBehaviour {
 
         GameObject generatedAtom = Instantiate(prefebAtom);
 
-        Atom atom = prefebAtom.AddComponent<Atom>();
+        Atom atom = generatedAtom.AddComponent<Atom>();
         atom.Id = molecule.CurrentAtomId++;
         atom.Symbol = symbol;
         atom.Valence = valence;
