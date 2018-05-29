@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Atom : MonoBehaviour {
-
+public class Atom : MonoBehaviour
+{
     //max size is 117 scale 0.6
     //const float scale = 1.0f;
 
@@ -11,7 +11,6 @@ public class Atom : MonoBehaviour {
 
     public string Symbol { set; get; }
     public int Valence { set; get; }
-    public Vector3 Pos { set; get; }
 	public int Connected { set; get; }
     public List<Vector4> vbonds;
 	public List<Bond> Bonds;
@@ -48,4 +47,8 @@ public class Atom : MonoBehaviour {
         return new Vector3(-1, -1, -1);
 	}
     
+    public string toString()
+    {
+        return Symbol + " " + Id.ToString() + " " + Valence.ToString() ;
+    }
 }

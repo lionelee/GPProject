@@ -7,20 +7,18 @@ public enum BondType
     SINGLE, DOUBLE, TRIPLE
 }
 
-public class Bond{
+public class Bond : MonoBehaviour{
     public int A1 { get; set; }
     public int A2 { get; set; }
     public BondType Type { get; set; }
-	
-	public Bond(int a1, int a2)
+
+    public string toString()
     {
-        A1 = a1;
-        A2 = a2;
+        return "Bond" + " " + Type.ToString() + " " + A1.ToString() + " " + A1.ToString();
     }
 }
 
 
 ///
-/*C 1 POS VALENCE ID  
-H 2
+/*C ID VALENCE POS
 BOND type 1 2*/

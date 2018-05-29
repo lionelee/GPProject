@@ -18,6 +18,11 @@ public class Molecule : MonoBehaviour
         Id = id;
     }
 
+    public List<Bond> getBonds()
+    {
+        return bonds;
+    }
+
     public void addAtom(Atom a)
     {
         atoms.Add(a);
@@ -39,6 +44,7 @@ public class Molecule : MonoBehaviour
         }
         return null;
     }
+
     public void deleteAtomById(int id)
     {
         foreach (Atom a in atoms)
@@ -49,6 +55,5 @@ public class Molecule : MonoBehaviour
                 return;
             }
         }
-        Debug.Log("id:" + id + "not found");
     }
 }

@@ -28,7 +28,10 @@ public class MoleculesAction : VRTK_InteractableObject
         {
             print("in build area");
             GameManager.PutIntoBuildArea(gameObject);
-        } else
+            Assembler assembler = gameObject.GetComponentInChildren<Assembler>();
+            assembler.Connect();
+        }
+        else
         {
             print("out of build area");
             GameManager.RemoveMolecule(gameObject);
