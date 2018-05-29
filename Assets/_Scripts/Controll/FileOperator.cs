@@ -6,7 +6,7 @@ public class FileOperator
 {
     public static void SaveModel(string path)
     {
-        FileStream fs = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+        /*FileStream fs = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite);
         StreamWriter sw = new StreamWriter(fs);
         foreach(GameObject mole in GameManager.molecules)
         {
@@ -21,12 +21,12 @@ public class FileOperator
             }
         }
         sw.Close();
-        fs.Close();
+        fs.Close();*/
     }
 
     public static void ReadModel(string path)
     {
-        FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read);
+        /*FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read);
         StreamReader sr = new StreamReader(fs);
 
         GameManager gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
@@ -57,6 +57,6 @@ public class FileOperator
             }
         }
         sr.Close();
-        fs.Close();
+        fs.Close();*/
     }
 }
