@@ -49,10 +49,18 @@ public class MoleculesAction : VRTK_InteractableObject
         for (int i = 0; i < gameObject.transform.childCount; i++)
         {
             GameObject child = gameObject.transform.GetChild(i).gameObject;
-            child.AddComponent<AtomsAction>();
-            child.GetComponent<AtomsAction>().touchHighlightColor = selectedColor;
-            child.GetComponent<AtomsAction>().isUsable = true;
+            AtomsAction aa = child.AddComponent<AtomsAction>();
+            aa.touchHighlightColor = selectedColor;
+            aa.isUsable = true;
+            aa.holdButtonToUse = false;
         }
+    }
+
+    public override void StopUsing(VRTK_InteractUse usingObject)
+    {
+        base.StopUsing(usingObject);
+        usingObject.ForceStopUsing();
+        ForceStopInteracting();
     }
 
     public void RemoveAtomsAction()

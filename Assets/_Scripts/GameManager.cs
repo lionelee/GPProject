@@ -89,6 +89,7 @@ public class GameManager : MonoBehaviour {
         Atom atom = AtomFactory.GetAtom(symbol, valence, molecule.CurrentAtomId++);
         molecule.addAtom(atom);
         molecules.Add(molecule);
+
         //model
         for (int i = 0; i < newComponentPos.transform.childCount; i++)
             DestroyObject(newComponentPos.transform.GetChild(i).gameObject);
@@ -96,7 +97,6 @@ public class GameManager : MonoBehaviour {
         GameObject prefebMole = (GameObject)Resources.Load("_Prefebs/Molecule") as GameObject;
         GameObject mole = Instantiate(prefebMole);
         mole.GetComponent<ComponentInformation>().Id = molecule.Id;
-        //mole.transform.parent = newComponentPos.transform;
 		mole.transform.SetParent (newComponentPos.transform, true);
         mole.transform.Translate(newComponentPos.transform.position - mole.transform.position);
 
@@ -122,15 +122,13 @@ public class GameManager : MonoBehaviour {
         }
 
         GameObject generatedAtom = Instantiate(prefebAtom);
-        //generatedAtom.transform.parent = mole.transform;
 		generatedAtom.transform.SetParent(mole.transform, true);
         generatedAtom.transform.Translate(mole.transform.position-generatedAtom.transform.position);
 
+
         generatedAtom.GetComponent<ComponentInformation>().Id = atom.Id;
 
-        //scale molecule's collider to fit the atom
-        //mole.GetComponent<SphereCollider>().radius *= generatedAtom.transform.lossyScale.x;
-        //CopyAtomCollider(generatedAtom, mole);
     }
+
 
 }

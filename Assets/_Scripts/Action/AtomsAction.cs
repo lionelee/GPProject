@@ -43,6 +43,6 @@ public class AtomsAction : VRTK_InteractableObject
     }
     private void DoSomething()
     {
-        print("atom id: " + gameObject.GetComponent<ComponentInformation>().Id);
+        print("Atom id: " + gameObject.GetComponent<ComponentInformation>().Id);
     }
 }
