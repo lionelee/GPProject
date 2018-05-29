@@ -25,6 +25,8 @@ GameObject:
   - component: {fileID: 54112028556681112}
   - component: {fileID: 114098833148818322}
   - component: {fileID: 114485498344431110}
+  - component: {fileID: 114547472455634706}
+  - component: {fileID: 114504505215861224}
   m_Layer: 0
   m_Name: Carbon
   m_TagString: Component
@@ -142,6 +144,33 @@ MonoBehaviour:
   useOverrideButton: 0
   allowedUseControllers: 0
   usingState: 0
+--- !u!114 &114504505215861224
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1827208736008608}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4dbdf7b7f79e6104eb35f5eea082b931, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  vbonds:
+  - {x: 1, y: 0, z: 0, w: 0}
+  - {x: -0.334, y: 0.943, z: 0, w: 0}
+  - {x: -0.334, y: -0.472, z: 0.817, w: 0}
+  - {x: -0.334, y: -0.472, z: -0.817, w: 0}
+--- !u!114 &114547472455634706
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1827208736008608}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 849521037e96ab246addaf0d1426e11f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!135 &135183762624715498
 SphereCollider:
   m_ObjectHideFlags: 1

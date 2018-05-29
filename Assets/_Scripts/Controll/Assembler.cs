@@ -3,101 +3,108 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Assembler : MonoBehaviour {
-
-	bool is_grab;
-	int aid;
+public class Assembler : MonoBehaviour
+{
+    GameObject sbond;
+    GameObject catom;
 	List<GameObject> sbonds;
 
 	void Start()
 	{
 		sbonds = new List<GameObject> ();
-		is_grab = true;
-		aid = -1;
+        catom = null;
 	}
 
-	void Update()
+	public void Connect()
 	{
-		if (!is_grab && aid >= 0) { // connect two atom and build bond
-			int id1 = aid; 
-			int id2 = int.Parse(GetComponent<Text>().text);
-			Molecule m = GameManager.curMolecule;
-			Atom a1 = m.getAtomById(id1);
-			Atom a2 = m.getAtomById(id2);
-
-			Bond b = new Bond(id1, id2);
-			GameManager.curMolecule.addBond(b);
-
+		if (catom != null) {
+            // get molecules and atoms
+            Molecule m1 = catom.GetComponentInParent<Molecule>();
+            Molecule m2 = GetComponentInParent<Molecule>();
+            Atom a1 = catom.GetComponent<Atom>();
+            Atom a2 = GetComponent<Atom>();
+            
 			//calculate expected position of this atom
 			string[] pair = new string[] { a1.Symbol, a2.Symbol };
 			float length = Config.BondLengthTable[pair];
-			Vector3 pos = GetComponent<Collider>().gameObject.transform.position;
+            Vector3 pos = catom.transform.position;
 			Vector3 angle = a1.getAngle();
 			Vector3 expectedPos = angle * length + pos;
 
 			//draw bond
-			GameObject cylinder = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-			cylinder.transform.position = Vector3.Lerp(pos, expectedPos, 0.5f);
-			cylinder.transform.localScale = new Vector3(0.2f, length, 0.2f);
-			float ang = Mathf.Acos ((expectedPos.y - pos.y) / length) * 180 / Mathf.PI;
-			cylinder.transform.Rotate(new Vector3(angle.z, 0,angle.x), ang);
-			GameManager.objs.Add(cylinder);
+            GameObject prefebMole = (GameObject)Resources.Load("_Prefebs/SingleBond") as GameObject;
+            GameObject bond = Instantiate(prefebMole);
+            bond.transform.position = Vector3.Lerp(pos, expectedPos, 0.5f);
+            Vector3 scale = prefebMole.transform.lossyScale;
+            scale.y = length;
+            bond.transform.localScale = scale;
+            bond.transform.rotation = Quaternion.LookRotation(pos, expectedPos);
+			GameManager.bonds.Add(bond);
 
-			/*a1.addBond(b);
-			a2.addBond(b);*/
+            //set abstract bond
+            Bond b = bond.AddComponent<Bond>();
+            b.A1 = a1.Id;
+            b.A2 = a2.Id;
+            b.Type = BondType.SINGLE;
 
-			//rotate this atom to match bond angle
-			Vector3 angle2 = a2.getAngle();
-			Vector3 vec1 = GetComponent<Collider>().gameObject.transform.TransformDirection(angle);
+            //move and rotate this atom and the molecule to match bond angle vector
+            transform.parent.transform.Translate(expectedPos - transform.position);
+            Vector3 angle2 = a2.getAngle();
+			Vector3 vec1 = catom.transform.TransformDirection(angle);
 			Vector3 vec2 = transform.TransformDirection(angle2);
 
 			float an = Vector3.Angle(vec1, vec2);
-			transform.Rotate(Vector3.Cross(vec1, vec2), an);
-			Vector3 offset = expectedPos - transform.position;
+			transform.parent.transform.Rotate(Vector3.Cross(vec1, vec2), an);
 
-			//reset aid
-			aid = -1;
+            //merge two molecules into one
+            Molecule m = catom.transform.parent.gameObject.GetComponent<Molecule>();
+            foreach(Transform child in transform.parent.transform)
+            {
+                child.parent = catom.transform.parent;
+                child.gameObject.GetComponent<Atom>().Id = m.CurrentAtomId++;
+            }
+            Destroy(transform.parent.gameObject);
 		}
 	}
 	   
 	void OnTriggerEnter(Collider collider)
 	{
-		int id1 = int.Parse (collider.gameObject.GetComponent<Text> ().text);
-		int id2 = int.Parse(GetComponent<Text>().text);
+        Atom a1 = collider.gameObject.GetComponent<Atom>();
+        Atom a2 = GetComponent<Atom>();
         
-        Molecule m = GameManager.curMolecule;
-        Atom a1 = m.getAtomById(id1);
-        Atom a2 = m.getAtomById(id2);
         if (a1.Connected == a1.Valence || a2.Connected == a2.Valence)
         {
-            Debug.Log("error connect");
+            Debug.Log("can not be connected");
             return;
         }
-
-		//set aid to record atom collided
-		aid = id1;
 
 		// show bond cloud be connected
 		Vector3 pos1 = collider.gameObject.transform.position;
 		Vector3 pos2 = transform.position;
-		GameObject cylinder = GameObject.CreatePrimitive (PrimitiveType.Cylinder);
-		cylinder.transform.position = Vector3.Lerp (pos1, pos2, 0.5f);
-		float distance = Vector3.Distance (pos1, pos2);
-		cylinder.transform.localScale = new Vector3 (0.2f, 0.5f * distance, 0.2f);
-		float deltaX = pos1.x - pos2.x;
-		float deltaY = pos1.y - pos2.y;
-		float deltaZ = pos1.z - pos2.z;
-		float an = Mathf.Acos((pos1.y - pos2.y) / distance) * 180 / Mathf.PI;
-		cylinder.transform.Rotate (new Vector3 (pos2.z - pos1.z , 0, pos1.x - pos2.x), an);
-        
-		sbonds.Add (cylinder);
+
+        GameObject prefebMole = (GameObject)Resources.Load("_Prefebs/SingleBond") as GameObject;
+        GameObject bond = Instantiate(prefebMole);
+        bond.GetComponent<Renderer>().material.color = Color.yellow;
+        bond.transform.position = Vector3.Lerp(pos1, pos2, 0.5f);
+        float distance = Vector3.Distance(pos1, pos2);
+        Vector3 scale = prefebMole.transform.lossyScale;
+        scale.y = distance;
+        bond.transform.localScale = scale;
+		bond.transform.rotation = Quaternion.LookRotation(pos1, pos2);
+
+        sbond = bond;
+        sbonds.Add (bond);
 
     }
 
 	void OnTriggerExit (Collider collider) {
-		//delete bonds that shown before
-		sbonds.Remove(collider.gameObject);
-		GameObject.Destroy (collider.gameObject);
+        //delete bonds that shown before
+        sbonds.Remove(sbond);
+		GameObject.Destroy (sbond);
+        if(catom == collider.gameObject)
+        {
+            catom = null;
+        }
 	}
 
 }
