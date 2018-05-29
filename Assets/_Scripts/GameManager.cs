@@ -109,4 +109,5 @@ public class GameManager : MonoBehaviour {
         generatedAtom.transform.Translate(mole.transform.position-generatedAtom.transform.position);
     }
 
+
 }
