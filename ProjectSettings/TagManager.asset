@@ -16,6 +16,7 @@ TagManager:
   - BuildArea
   - NewComponentPos
   - EventManager
+  - Bond
   layers:
   - Default
   - TransparentFX

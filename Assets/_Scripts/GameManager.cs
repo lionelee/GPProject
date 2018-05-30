@@ -128,11 +128,9 @@ public class GameManager : MonoBehaviour
         atom.Id = molecule.CurrentAtomId++;
         atom.Symbol = symbol;
         atom.Valence = valence;
-        atom.vbonds = Config.BondAngleTable[symbol];
+        atom.vbonds = new List<Vector4>(Config.BondAngleTable[symbol]);
         generatedAtom.transform.parent = mole.transform;
         generatedAtom.transform.Translate(mole.transform.position - generatedAtom.transform.position);
-
-
     }
 
     public GameObject GenerateMolecule()

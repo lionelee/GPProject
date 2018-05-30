@@ -28,16 +28,32 @@ public class Assembler : MonoBehaviour
 
 	public void Connect()
 	{
-		if (catom != null) {
+        print("connect");
+        if (catom != null) {
+            print("connect 1");
+            DeleteSbond(catom);
             // get molecules and atoms
             Molecule m1 = catom.GetComponentInParent<Molecule>();
             Molecule m2 = GetComponentInParent<Molecule>();
             Atom a1 = catom.GetComponent<Atom>();
             Atom a2 = GetComponent<Atom>();
-            
-			//calculate expected position of this atom
-			string[] pair = new string[] { a1.Symbol, a2.Symbol };
-			float length = Config.BondLengthTable[pair];
+
+            if (a1.Connected == a1.Valence || a2.Connected == a2.Valence)
+            {
+                return;
+            }
+
+            //calculate expected position of this atom
+            string key;
+            if(a1.Symbol.Length <= a2.Symbol.Length && a1.Symbol[0] < a2.Symbol[0])
+            {
+                key = a1.Symbol + a2.Symbol;
+            }
+            else
+            {
+                key = a2.Symbol + a1.Symbol;
+            }
+			float length = Config.BondLengthTable[key];
             Vector3 pos = catom.transform.position;
 			Vector3 angle = a1.getAngle();
 			Vector3 expectedPos = angle * length + pos;
@@ -45,39 +61,47 @@ public class Assembler : MonoBehaviour
 			//draw bond
             GameObject prefebMole = (GameObject)Resources.Load("_Prefebs/SingleBond") as GameObject;
             GameObject bond = Instantiate(prefebMole);
-            bond.transform.parent = transform.parent;
 
             bond.transform.position = Vector3.Lerp(pos, expectedPos, 0.5f);
             Vector3 scale = prefebMole.transform.lossyScale;
-            scale.y = length;
+            scale.y = length * 0.5f;
             bond.transform.localScale = scale;
             bond.transform.LookAt(expectedPos);
             bond.transform.Rotate(new Vector3(90, 0, 0));
-            GameManager.bonds.Add(bond);
+            bond.transform.parent = catom.transform.parent;
 
             //set abstract bond
             Bond b = bond.AddComponent<Bond>();
             b.A1 = a1.Id;
             b.A2 = a2.Id;
             b.Type = BondType.SINGLE;
+            a1.addBond(b);
+            a2.addBond(b);
 
             //move and rotate this atom and the molecule to match bond angle vector
             transform.parent.transform.Translate(expectedPos - transform.position);
-            Vector3 angle2 = a2.getAngle();
 			Vector3 vec1 = catom.transform.TransformDirection(angle);
-			Vector3 vec2 = transform.TransformDirection(angle2);
+			Vector3 vec2 = -transform.TransformDirection(a2.getAngle());
 
+            print(vec1);
+            print(vec2);
 			float an = Vector3.Angle(vec1, vec2);
-			transform.parent.transform.Rotate(Vector3.Cross(vec1, vec2), an);
+            print("angle: " + an);
+			transform.parent.transform.RotateAround(transform.position, Vector3.Cross(vec1, vec2), an);
 
             //merge two molecules into one
             Molecule m = catom.transform.parent.gameObject.GetComponent<Molecule>();
+            GameObject parent = transform.parent.gameObject;
             foreach(Transform child in transform.parent.transform)
             {
-                child.parent = catom.transform.parent;
-                child.gameObject.GetComponent<Atom>().Id = m.CurrentAtomId++;
+                if (child.gameObject.tag != "Bond")
+                {
+                    child.parent = catom.transform.parent;
+                    child.gameObject.GetComponent<Atom>().Id = m.CurrentAtomId++;
+                }
             }
-            Destroy(transform.parent.gameObject);
+
+            Destroy(parent);
 		}
 	}
 	   
@@ -90,13 +114,13 @@ public class Assembler : MonoBehaviour
         if (!grabbed)
             return;
 
-        if(sbonds.ContainsKey(collider.gameObject))
-        {
-            DeleteSbond(collider.gameObject);
-        }
+
+        DeleteSbond(collider.gameObject);
+
         print(collider.gameObject);
         print("trigger enter");
         gameObject.transform.parent.GetComponent<MoleculesAction>().SetConnectableAtom(gameObject);
+
 
         Atom a1 = collider.gameObject.GetComponent<Atom>();
         Atom a2 = GetComponent<Atom>();
@@ -125,16 +149,19 @@ public class Assembler : MonoBehaviour
 
 
         sbonds.Add (collider.gameObject, bond);
-
+        catom = collider.gameObject;
     }
 
     void DeleteSbond(GameObject gameObject)
     {
         //delete bonds that shown before
         print("exit");
-        GameObject sbond = sbonds[gameObject];
-        sbonds.Remove(gameObject);
-        Destroy(sbond);
+        if (sbonds.ContainsKey(gameObject))
+        {
+            GameObject sbond = sbonds[gameObject];
+            sbonds.Remove(gameObject);
+            Destroy(sbond);
+        }
 
     }
 
@@ -147,10 +174,8 @@ public class Assembler : MonoBehaviour
         if (!grabbed)
             return;
 
-        if (sbonds.ContainsKey(collider.gameObject))
-        {
-            DeleteSbond(collider.gameObject);
-        }
+
+        DeleteSbond(collider.gameObject);
 
         if (catom == gameObject)
         {

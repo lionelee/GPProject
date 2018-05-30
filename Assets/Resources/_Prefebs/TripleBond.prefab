@@ -57,7 +57,7 @@ GameObject:
   - component: {fileID: 4902416367517694}
   m_Layer: 0
   m_Name: TripleBond
-  m_TagString: Untagged
+  m_TagString: Bond
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

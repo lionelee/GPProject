@@ -13,6 +13,7 @@ public class MoleculesAction : VRTK_InteractableObject
 
     public void SetConnectableAtom(GameObject atom)
     {
+        print("setConnectable");
         connectableAtom = atom;
     }
 
@@ -24,14 +25,6 @@ public class MoleculesAction : VRTK_InteractableObject
     public override void Grabbed(VRTK_InteractGrab grabbingObject)
     {
         base.Grabbed(grabbingObject);
-        /*for(int i = 0;i < gameObject.transform.childCount; i++)
-        {
-            gameObject.transform.GetChild(i).GetComponent<Assembler>().SetGrabbed();
-        }*/
-        //foreach(Transform child in gameObject.transform)
-        //{
-        //    child.gameObject.GetComponent<Assembler>().SetGrabbed();
-        //}
         foreach(Assembler assembler in gameObject.GetComponentsInChildren<Assembler>())
         {
             assembler.SetGrabbed();
