@@ -5,15 +5,26 @@ using UnityEngine.UI;
 
 public class Assembler : MonoBehaviour
 {
-    GameObject sbond;
+    //GameObject sbond;
     GameObject catom;
-	List<GameObject> sbonds;
+	Dictionary<GameObject, GameObject> sbonds;
+    bool grabbed;
 
 	void Start()
 	{
-		sbonds = new List<GameObject> ();
+        sbonds = new Dictionary<GameObject, GameObject>();
         catom = null;
 	}
+
+    public void SetGrabbed()
+    {
+        grabbed = true;
+    }
+
+    public void ResetGrabbed()
+    {
+        grabbed = false;
+    }
 
 	public void Connect()
 	{
@@ -34,12 +45,15 @@ public class Assembler : MonoBehaviour
 			//draw bond
             GameObject prefebMole = (GameObject)Resources.Load("_Prefebs/SingleBond") as GameObject;
             GameObject bond = Instantiate(prefebMole);
+            bond.transform.parent = transform.parent;
+
             bond.transform.position = Vector3.Lerp(pos, expectedPos, 0.5f);
             Vector3 scale = prefebMole.transform.lossyScale;
             scale.y = length;
             bond.transform.localScale = scale;
-            bond.transform.rotation = Quaternion.LookRotation(pos, expectedPos);
-			GameManager.bonds.Add(bond);
+            bond.transform.LookAt(expectedPos);
+            bond.transform.Rotate(new Vector3(90, 0, 0));
+            GameManager.bonds.Add(bond);
 
             //set abstract bond
             Bond b = bond.AddComponent<Bond>();
@@ -69,6 +83,21 @@ public class Assembler : MonoBehaviour
 	   
 	void OnTriggerEnter(Collider collider)
 	{
+        
+        if (collider.gameObject.GetComponent<Atom>() == null)
+            return;
+
+        if (!grabbed)
+            return;
+
+        if(sbonds.ContainsKey(collider.gameObject))
+        {
+            DeleteSbond(collider.gameObject);
+        }
+        print(collider.gameObject);
+        print("trigger enter");
+        gameObject.transform.parent.GetComponent<MoleculesAction>().SetConnectableAtom(gameObject);
+
         Atom a1 = collider.gameObject.GetComponent<Atom>();
         Atom a2 = GetComponent<Atom>();
         
@@ -88,23 +117,46 @@ public class Assembler : MonoBehaviour
         bond.transform.position = Vector3.Lerp(pos1, pos2, 0.5f);
         float distance = Vector3.Distance(pos1, pos2);
         Vector3 scale = prefebMole.transform.lossyScale;
-        scale.y = distance;
+        scale.y = distance * 0.5f;
         bond.transform.localScale = scale;
-		bond.transform.rotation = Quaternion.LookRotation(pos1, pos2);
 
-        sbond = bond;
-        sbonds.Add (bond);
+        bond.transform.LookAt(pos2);
+        bond.transform.Rotate(new Vector3(90, 0, 0));
+
+
+        sbonds.Add (collider.gameObject, bond);
+
+    }
+
+    void DeleteSbond(GameObject gameObject)
+    {
+        //delete bonds that shown before
+        print("exit");
+        GameObject sbond = sbonds[gameObject];
+        sbonds.Remove(gameObject);
+        Destroy(sbond);
 
     }
 
 	void OnTriggerExit (Collider collider) {
         //delete bonds that shown before
-        sbonds.Remove(sbond);
-		GameObject.Destroy (sbond);
-        if(catom == collider.gameObject)
+        if (collider.gameObject.GetComponent<Atom>() == null)
+            return;
+
+        print("exit trigger");
+        if (!grabbed)
+            return;
+
+        if (sbonds.ContainsKey(collider.gameObject))
+        {
+            DeleteSbond(collider.gameObject);
+        }
+
+        if (catom == gameObject)
         {
             catom = null;
         }
-	}
+
+    }
 
 }
