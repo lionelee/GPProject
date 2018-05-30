@@ -60,7 +60,11 @@ public class GameManager : MonoBehaviour
 
     public static void RemoveAtom(GameObject atom)
     {
-        
+        //last atom;
+        if(atom.transform.parent.childCount == 1)
+        {
+            Destroy(atom.transform.parent.gameObject);
+        }
     }
 
     public static GameObject GetSelectedComponent()
