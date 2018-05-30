@@ -2417,7 +2417,7 @@ Prefab:
     - target: {fileID: 224000012623161658, guid: d46cf6b1ad9d84a48ae7548a2a6b41b3,
         type: 2}
       propertyPath: m_AnchoredPosition.x
-      value: 595
+      value: 587
       objectReference: {fileID: 0}
     - target: {fileID: 224000012623161658, guid: d46cf6b1ad9d84a48ae7548a2a6b41b3,
         type: 2}
@@ -8702,6 +8702,7 @@ GameObject:
   - component: {fileID: 1569711254}
   - component: {fileID: 1569711261}
   - component: {fileID: 1569711262}
+  - component: {fileID: 1569711263}
   m_Layer: 0
   m_Name: RightController
   m_TagString: Untagged
@@ -8722,7 +8723,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playareaCursor: {fileID: 0}
   directionIndicator: {fileID: 0}
-  customRaycast: {fileID: 0}
+  customRaycast: {fileID: 1569711263}
   layersToIgnore:
     serializedVersion: 2
     m_Bits: 4
@@ -8913,6 +8914,21 @@ MonoBehaviour:
   controllerAttachPoint: {fileID: 0}
   controllerEvents: {fileID: 0}
   interactTouch: {fileID: 0}
+--- !u!114 &1569711263
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1569711253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f3942f053b21854fbc5d1227c94120b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  layersToIgnore:
+    serializedVersion: 2
+    m_Bits: 4
+  triggerInteraction: 0
 --- !u!4 &1571193542 stripped
 Transform:
   m_PrefabParentObject: {fileID: 489550, guid: 743f9118303d2468eb0fb8ea9550894c, type: 2}

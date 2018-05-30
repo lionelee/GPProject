@@ -20,6 +20,7 @@ public class MoleculesAction : VRTK_InteractableObject
             GameManager.PutIntoBuildArea(gameObject);
             Assembler assembler = gameObject.GetComponentInChildren<Assembler>();
             assembler.Connect();
+            Destroy(gameObject.GetComponentInChildren<Assembler>());
         }
         else
         {

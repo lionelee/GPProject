@@ -23,8 +23,6 @@ GameObject:
   - component: {fileID: 135183762624715498}
   - component: {fileID: 23193504134244564}
   - component: {fileID: 54112028556681112}
-  - component: {fileID: 114098833148818322}
-  - component: {fileID: 114750468735480792}
   - component: {fileID: 114075865979333712}
   - component: {fileID: 135826385704463786}
   m_Layer: 0
@@ -114,48 +112,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 849521037e96ab246addaf0d1426e11f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114098833148818322
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1827208736008608}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b5dae15cec20b5e4d8f338b66271a6d6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &114750468735480792
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1827208736008608}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30bbc4896c970c14bb2f321a67acdccc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  disableWhenIdle: 1
-  touchHighlightColor: {r: 0.102941155, g: 0.62880325, b: 1, a: 0}
-  allowedTouchControllers: 0
-  ignoredColliders:
-  - {fileID: 135826385704463786}
-  isGrabbable: 0
-  holdButtonToGrab: 1
-  stayGrabbedOnTeleport: 1
-  validDrop: 1
-  grabOverrideButton: 0
-  allowedGrabControllers: 0
-  grabAttachMechanicScript: {fileID: 0}
-  secondaryGrabActionScript: {fileID: 0}
-  isUsable: 1
-  holdButtonToUse: 1
-  useOnlyIfGrabbed: 0
-  pointerActivatesUseAction: 0
-  useOverrideButton: 0
-  allowedUseControllers: 0
-  usingState: 0
 --- !u!135 &135183762624715498
 SphereCollider:
   m_ObjectHideFlags: 1

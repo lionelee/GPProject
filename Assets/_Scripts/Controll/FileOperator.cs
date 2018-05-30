@@ -21,7 +21,7 @@ public class FileOperator
             }
         }
         sw.Close();
-        fs.Close();*/
+        fs.Close();
     }
 
     public static void ReadModel(string path)

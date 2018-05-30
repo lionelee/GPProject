@@ -61,13 +61,6 @@ public class GameManager : MonoBehaviour
         return null;
     }
 
-    /// <summary>
-    /// Generate an atom model to the ray pointer,
-    /// and new a Atom 
-    /// </summary>
-    /// <param name="symbol"></param>
-    /// <param name="valence"></param>
-
     public void GenerateAtom(string symbol, int valence)
     {
         // clear atoms in component area
@@ -112,6 +105,46 @@ public class GameManager : MonoBehaviour
         mole.GetComponent<SphereCollider>().radius *= generatedAtom.transform.lossyScale.x;
     }
 
+    /* methods for operating bonds */
+    public void ConnectAtoms(GameObject obj1, GameObject obj2)
+    {
+        Atom a1 = obj1.GetComponent<Atom>();
+        Atom a2 = obj2.GetComponent<Atom>();
+
+        /* connect atoms as a ring in one molecule */
+        if(obj1.transform.parent == obj2.transform.parent)
+        {
+            
+            return;
+        }
+
+        /* connect two atoms from different molecules */
+        //calculate expected position
+        string[] pair = new string[] { a1.Symbol, a2.Symbol };
+        float length = Config.BondLengthTable[pair];
+        Vector3 pos = obj1.transform.position;
+        Vector3 angle = a1.getAngle();
+        Vector3 expectedPos = angle * length + pos;
+
+        //draw bond
+        GameObject prefebMole = (GameObject)Resources.Load("_Prefebs/SingleBond") as GameObject;
+        GameObject bond = Instantiate(prefebMole);
+        bond.transform.position = Vector3.Lerp(pos, expectedPos, 0.5f);
+        Vector3 scale = prefebMole.transform.lossyScale;
+        scale.y = length;
+        bond.transform.localScale = scale;
+        bond.transform.rotation = Quaternion.LookRotation(pos, expectedPos);
+        GameManager.bonds.Add(bond);
+
+        //set abstract bond
+        Bond b = bond.AddComponent<Bond>();
+        b.A1 = a1.Id;
+        b.A2 = a2.Id;
+        b.Type = BondType.SINGLE;
+    }
+
+
+    /* methods for importing model from file */
     public GameObject GenerateMolecule()
     {
         GameObject prefebMole = (GameObject)Resources.Load("_Prefebs/Molecule") as GameObject;
