@@ -20,31 +20,29 @@ public class Atom : MonoBehaviour
     public Atom()
     {
         Connected = 0;
-        vbonds = new List<Vector4>();
+        Bonds = new List<Bond>();
     }
 	
 	public void addBond(Bond b)
 	{
 		Bonds.Add (b);
-        int count = vbonds.Count;
-		for(int i = 0; i < count; ++i) {
-			if (vbonds[i].w == 0) {
-                Vector4 v = vbonds[i];
-                v.w = 1;
-                vbonds[i] = v;
-				break;
-			}
-		}
-		Connected += 1;
+		Connected ++;
 	}
 	
 	public Vector3 getAngle()
-	{
-		foreach(Vector4 v in vbonds){
-			if (v.w == 0)
-				return new Vector3 (v.x, v.y, v.z);
-		}
-        return new Vector3(-1, -1, -1);
+    {
+        for (int i = 0; i < vbonds.Count; ++i)
+        {
+            if (vbonds[i].w == 0)
+            {
+                Vector4 v = vbonds[i];
+                v.w = 1;
+                vbonds[i] = v;
+                print(vbonds[i]);
+                return new Vector3(v.x, v.y, v.z);
+            }
+        }
+        return Vector3.zero;
 	}
     
     public string toString()

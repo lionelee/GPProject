@@ -29,11 +29,11 @@ public class Config{
         BondAngleTable.Add("O", new List<Vector4> { new Vector4(1f,0f,0f,0), new Vector4(-0.259f,0f,0.966f,0)});
 
         // initialize bond length table
-		BondLengthTable.Add("CC", 1.512f);
-		BondLengthTable.Add("CH", 1.096f);
-		BondLengthTable.Add("CO", 1.427f);
-		BondLengthTable.Add("OO", 1.516f);
-		BondLengthTable.Add("HO", 0.956f);
+		BondLengthTable.Add("CC", 0.756f);
+		BondLengthTable.Add("CH", 0.548f);
+		BondLengthTable.Add("CO", 0.714f);
+		BondLengthTable.Add("OO", 0.758f);
+		BondLengthTable.Add("HO", 0.478f);
 
     }
 }
