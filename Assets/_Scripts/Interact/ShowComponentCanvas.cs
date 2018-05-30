@@ -2,10 +2,9 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ShowComponentDetail : VRTK_InteractableObject
+public class ShowComponentCanvas : VRTK_InteractableObject
 {
     
-    public GameObject canvas;
 	// Use this for initialization
 	void Start () {
 		
@@ -21,6 +20,6 @@ public class ShowComponentDetail : VRTK_InteractableObject
     {
         print("use");
         base.StartUsing(usingObject);
-        canvas.SetActive(true);
+        GameObject.FindGameObjectWithTag("EventManager").GetComponent<UiDisplayController>().ShowSelectAtomCanvas(true);
     }
 }

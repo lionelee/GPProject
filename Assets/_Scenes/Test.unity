@@ -3107,7 +3107,6 @@ MonoBehaviour:
   useOverrideButton: 0
   allowedUseControllers: 0
   usingState: 0
-  canvas: {fileID: 654199679}
 --- !u!1 &509871415
 GameObject:
   m_ObjectHideFlags: 0
