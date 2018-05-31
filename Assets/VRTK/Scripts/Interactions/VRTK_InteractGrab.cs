@@ -270,6 +270,7 @@ namespace VRTK
         {
             if (e.target != null)
             {
+                print(e.target);
                 VRTK_InteractableObject touchedObjectScript = e.target.GetComponent<VRTK_InteractableObject>();
                 if (!touchedObjectScript.IsGrabbed() && savedGrabButton != VRTK_ControllerEvents.ButtonAlias.Undefined)
                 {

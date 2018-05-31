@@ -36,6 +36,7 @@ public class MoleculesAction : VRTK_InteractableObject
 
     public override void Ungrabbed(VRTK_InteractGrab previousGrabbingObject)
     {
+        print("ungrab");
         base.Ungrabbed(previousGrabbingObject);
 		/*gameObject.GetComponent<Rotator> ().enabled = false;
 		previousGrabbingObject.gameObject.GetComponent<RotateController> ().RemoveMolecule ();*/
@@ -53,7 +54,7 @@ public class MoleculesAction : VRTK_InteractableObject
             {
                 Assembler assembler = connectableAtom.GetComponent<Assembler>();
                 assembler.Connect();
-                Destroy(assembler);
+                //Destroy(assembler);
                 ResetConnectable();
             }
         }
@@ -74,14 +75,22 @@ public class MoleculesAction : VRTK_InteractableObject
         print("use molecule");
         base.StartUsing(usingObject);
         List<GameObject> list = GetTouchingObjects();
-        print(list[0].GetComponent<VRTK_InteractTouch>().GetTouchedObject());
         for (int i = 0; i < gameObject.transform.childCount; i++)
         {
             GameObject child = gameObject.transform.GetChild(i).gameObject;
-            AtomsAction aa = child.AddComponent<AtomsAction>();
-            aa.touchHighlightColor = selectedColor;
-            aa.isUsable = true;
-            aa.holdButtonToUse = false;
+            if (child.GetComponent<Atom>() != null)
+            {
+                AtomsAction aa = child.AddComponent<AtomsAction>();
+                aa.touchHighlightColor = selectedColor;
+                aa.isUsable = true;
+                aa.holdButtonToUse = false;
+            } else
+            {
+                BondsAction ba = child.AddComponent<BondsAction>();
+                ba.touchHighlightColor = selectedColor;
+                ba.isUsable = true;
+                ba.holdButtonToUse = false;
+            }
         }
     }
 
@@ -92,12 +101,40 @@ public class MoleculesAction : VRTK_InteractableObject
         ForceStopInteracting();
     }
 
-    public void RemoveAtomsAction()
+    public void DisableAllComponent()
     {
         for (int i = 0; i < gameObject.transform.childCount; i++)
         {
             GameObject child = gameObject.transform.GetChild(i).gameObject;
-            DestroyObject(child.GetComponent<AtomsAction>());
+            if (child.GetComponent<Atom>() != null)
+            {
+                child.GetComponent<AtomsAction>().disableWhenIdle = false;
+                child.GetComponent<AtomsAction>().enabled = false;
+
+            }
+            else
+            {
+                child.GetComponent<BondsAction>().disableWhenIdle = false;
+                child.GetComponent<BondsAction>().enabled = false;
+            }
+        }
+    }
+
+    public void RemoveComponentsAction()
+    {
+        for (int i = 0; i < gameObject.transform.childCount; i++)
+        {
+            GameObject child = gameObject.transform.GetChild(i).gameObject;
+            if (child.GetComponent<Atom>() != null)
+            {
+                child.GetComponent<AtomsAction>().ForceStopInteracting();
+                DestroyObject(child.GetComponent<AtomsAction>());
+            }
+            else
+            {
+                child.GetComponent<BondsAction>().ForceStopInteracting();
+                DestroyObject(child.GetComponent<BondsAction>());
+            }
         }
 
     }
