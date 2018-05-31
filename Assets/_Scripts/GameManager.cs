@@ -148,8 +148,16 @@ public class GameManager : MonoBehaviour
 
         /* connect two atoms from different molecules */
         //calculate expected position
-        string[] pair = new string[] { a1.Symbol, a2.Symbol };
-        float length = Config.BondLengthTable[pair];
+        string key;
+        if (a1.Symbol.Length <= a2.Symbol.Length && a1.Symbol[0] < a2.Symbol[0])
+        {
+            key = a1.Symbol + a2.Symbol;
+        }
+        else
+        {
+            key = a2.Symbol + a1.Symbol;
+        }
+        float length = Config.BondLengthTable[key];
         Vector3 pos = obj1.transform.position;
         Vector3 angle = a1.getAngle();
         Vector3 expectedPos = angle * length + pos;

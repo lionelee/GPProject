@@ -88,7 +88,7 @@ public class Assembler : MonoBehaviour
             print(vec1);
             print(vec2);
 			float an = Vector3.Angle(vec1, vec2);
-            print("angle: " + an);
+            print("axis: " + Vector3.Cross(vec1, vec2));
 			transform.parent.transform.RotateAround(transform.position, Vector3.Cross(vec1, vec2), an);
 
             //merge two molecules into one
