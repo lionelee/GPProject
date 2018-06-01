@@ -109,18 +109,24 @@ public class Assembler : MonoBehaviour
         //then merge two molecules
         Molecule m = catom.transform.parent.gameObject.GetComponent<Molecule>();
         GameObject parent = transform.parent.gameObject;
+        List<GameObject> children = new List<GameObject>();
         foreach (Transform child in transform.parent.transform)
         {
-            print("child info: " + child);
-            child.parent = catom.transform.parent;
-            if (child.gameObject.tag != "Bond")
+            children.Add(child.gameObject);
+        }
+        foreach (GameObject child in children)
+        {
+            if (child.tag != "Bond" && child.tag != "Component")
+                continue;
+            child.transform.parent = catom.transform.parent;
+            if (child.tag != "Bond")
             {
-                child.gameObject.GetComponent<Atom>().Id = m.CurrentAtomId++;
+                child.GetComponent<Atom>().Id = m.CurrentAtomId++;
             }
         }
 
         Destroy(parent);
-
+        sbond = null;
 
         /*if (catom != null) {
             DeleteSbond(catom);
@@ -218,7 +224,6 @@ public class Assembler : MonoBehaviour
         {
             Destroy(sbond);
         }
-
 
         Atom otherAtom = collider.gameObject.GetComponent<Atom>();
         Atom thisAtom = collider.gameObject.GetComponent<Atom>();
