@@ -7,7 +7,10 @@ using UnityEngine.EventSystems;
 public class ButtonEvents : MonoBehaviour {
 
     public List<Button> valenceButtons;
+    public List<Button> componentOpButtons;
+    public List<Button> bondTypeButtons;
     public GameObject valenceCanvas;
+    public GameObject bondTypeCanvas;
 
 	// Use this for initialization
 	void Start () {
@@ -59,7 +62,7 @@ public class ButtonEvents : MonoBehaviour {
             valenceCanvas.SetActive(false);
         } else if(name == "ComponentOperationCanvas")
         {
-
+            bondTypeCanvas.SetActive(false);
         }
     }
 
@@ -70,5 +73,44 @@ public class ButtonEvents : MonoBehaviour {
         //just delete
         GameManager.RemoveAtom(selected);
         Destroy(selected);
+    }
+
+    public void SetComponentOpButton(GameObject component)
+    {
+        if(component.GetComponent<Atom>() != null)
+        {
+            componentOpButtons[0].GetComponentInChildren<Text>().text = "Connect";
+            componentOpButtons[1].GetComponentInChildren<Text>().text = "Detach";
+        }
+        else
+        {
+            componentOpButtons[0].GetComponentInChildren<Text>().text = "Change Type";
+            componentOpButtons[1].GetComponentInChildren<Text>().text = "Break";
+        }
+    }
+
+    public void OnComponentOpButtonClick(GameObject button)
+    {
+        string op = button.GetComponentInChildren<Text>().text;
+
+        if(op == "Connect")
+        {
+
+        } else if(op == "Detach")
+        {
+
+        } else if(op == "Change Type")
+        {
+            //GameManager.GetSelectedComponent().GetComponent<Bond>().Type;
+            //GameManager.GetSelectedComponent().GetComponent<Bond>().A1;
+            //GameManager.GetSelectedComponent().GetComponent<Bond>().A2;
+            bondTypeCanvas.SetActive(true);
+        } else if(op == "Break"){
+
+        }
+        else
+        {
+
+        }
     }
 }

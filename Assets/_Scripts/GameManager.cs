@@ -82,12 +82,6 @@ public class GameManager : MonoBehaviour
         selectedComponent = null;
     }
     
-    /// <summary>
-    /// Generate an atom model to the ray pointer,
-    /// and new a Atom 
-    /// </summary>
-    /// <param name="symbol"></param>
-    /// <param name="valence"></param>
 
     public static void GenerateAtom(string symbol, int valence)
     {
@@ -133,7 +127,8 @@ public class GameManager : MonoBehaviour
         generatedAtom.transform.Translate(mole.transform.position - generatedAtom.transform.position);
     }
 
-    /* methods for operating bonds */
+    #region /* methods for operating bonds */
+    //connect two atoms by selection
     public void ConnectAtoms(GameObject obj1, GameObject obj2)
     {
         Atom a1 = obj1.GetComponent<Atom>();
@@ -179,8 +174,15 @@ public class GameManager : MonoBehaviour
         b.Type = BondType.SINGLE;
     }
 
+    //disconnect two atoms by selection
+    public void DisonnectAtoms(GameObject obj1, GameObject obj2)
+    {
 
-    /* methods for importing model from file */
+    }
+    #endregion
+
+    #region /* methods for importing model from file */
+
     public GameObject GenerateMolecule()
     {
         GameObject prefebMole = (GameObject)Resources.Load("_Prefebs/Molecule") as GameObject;
@@ -221,4 +223,5 @@ public class GameManager : MonoBehaviour
         generatedAtom.transform.parent = mole.transform;
         generatedAtom.transform.Translate(mole.transform.position - generatedAtom.transform.position);
     }
+    #endregion
 }
