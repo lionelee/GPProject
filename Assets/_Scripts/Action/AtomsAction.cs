@@ -25,21 +25,26 @@ public class AtomsAction : VRTK_InteractableObject
         GameManager.CancelComponentSelected();
         GameObject.FindGameObjectWithTag("EventManager").GetComponent<UiDisplayController>().ShowComponentOpCanvas(false, gameObject);
 
-        gameObject.GetComponentInParent<MoleculesAction>().DisableAllComponent();
+        GameManager.SwitchMode(InteracteMode.GRAB);
 
-        StartCoroutine(CountDown());
-        
+
     }
 
-    IEnumerator CountDown()
-    {
-        yield return new WaitForSeconds(0.2f);
-        gameObject.GetComponentInParent<MoleculesAction>().RemoveComponentsAction();
-    }
 
     private void ShowComponentOperationCanvas()
     {
         
         print("atom id: " + gameObject.GetComponent<Atom>().Id);
+    }
+
+    public void Detach()
+    {
+        List<GameObject> connectedBond = new List<GameObject>();
+        connectedBond = gameObject.GetComponent<Atom>().Bonds;
+        //倒序遍历删除...
+        for(int i = connectedBond.Count - 1; i >=0 ; i--)
+        {
+            connectedBond[i].GetComponent<BondsAction>().Break();
+        }
     }
 }

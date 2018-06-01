@@ -13,23 +13,42 @@ public class Atom : MonoBehaviour
     public int Valence { set; get; }
 	public int Connected { set; get; }
     public List<Vector4> vbonds;
-	public List<Bond> Bonds;
+	public List<GameObject> Bonds;
 
     //public static int CurrentId = 0;
 
     public Atom()
     {
         Connected = 0;
-        Bonds = new List<Bond>();
+        Bonds = new List<GameObject>();
     }
 	
-	public void addBond(Bond b)
+	public void addBond(GameObject b)
 	{
-		Bonds.Add (b);
+        Bonds.Add (b);
 		Connected ++;
 	}
 	
-	public Vector3 getAngle()
+    public void removeBond(GameObject bond)
+    {
+        Bonds.Remove(bond);
+
+        int vbondsIndex;
+        if(bond.GetComponent<Bond>().A1 == gameObject)
+        {
+            vbondsIndex = bond.GetComponent<Bond>().A1Index;
+        } else
+        {
+            vbondsIndex = bond.GetComponent<Bond>().A2Index;
+        }
+
+        Vector4 v = vbonds[vbondsIndex];
+        v.w = 0;
+        vbonds[vbondsIndex] = v;
+        Connected--;
+    }
+
+	public Vector3 getAngle(int returnIndex)
     {
         for (int i = 0; i < vbonds.Count; ++i)
         {
@@ -39,12 +58,14 @@ public class Atom : MonoBehaviour
                 v.w = 1;
                 vbonds[i] = v;
                 print(vbonds[i]);
+                returnIndex = i;
                 return new Vector3(v.x, v.y, v.z);
             }
         }
         return Vector3.zero;
 	}
     
+
     public string toString()
     {
         return Symbol + " " + Id.ToString() + " " + Valence.ToString() ;

@@ -23,22 +23,45 @@ public class BondsAction : VRTK_InteractableObject
         GameManager.CancelComponentSelected();
         GameObject.FindGameObjectWithTag("EventManager").GetComponent<UiDisplayController>().ShowComponentOpCanvas(false, gameObject);
 
-        gameObject.GetComponentInParent<MoleculesAction>().DisableAllComponent();
+        GameManager.SwitchMode(InteracteMode.GRAB);
 
-        StartCoroutine(CountDown());
-
-    }
-
-    IEnumerator CountDown()
-    {
-        
-        yield return new WaitForSeconds(0.2f);
-        gameObject.GetComponentInParent<MoleculesAction>().RemoveComponentsAction();
     }
 
     private void ShowComponentOperationCanvas()
     {
 
         print("atom id: " + gameObject.GetComponent<Atom>().Id);
+    }
+
+    public void Break()
+    {
+        print("breaking!");
+        //准备DFS参数
+        List<GameObject> objectToDetach = new List<GameObject>();
+        GameObject startAtom = gameObject.GetComponent<Bond>().A2;
+        GameObject oppositeAtom = gameObject.GetComponent<Bond>().A1;
+        List<GameObject> ignoreComponent = new List<GameObject>();
+        ignoreComponent.Add(gameObject);
+        //DFS
+        TraverseUtil.DfsMolecule(startAtom, ignoreComponent, objectToDetach);
+
+        //只有在断开键后两边不属于同一个分子时，才生成新分子，否则只用删除bond即可
+        if (!objectToDetach.Contains(gameObject.GetComponent<Bond>().A1))
+        {
+            //merge to new molecule
+            GameObject mole = GameManager.NewMolecule();
+            GameManager.PutIntoBuildArea(mole);
+
+            mole.transform.position = startAtom.transform.position;
+            foreach (GameObject component in objectToDetach)
+            {
+                component.transform.parent = mole.transform;
+            }
+        }
+
+        //Destroy bond
+        startAtom.GetComponent<Atom>().removeBond(gameObject);
+        oppositeAtom.GetComponent<Atom>().removeBond(gameObject);
+        Destroy(gameObject);
     }
 }

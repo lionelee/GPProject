@@ -7,53 +7,53 @@ public class Molecule : MonoBehaviour
     public int Id { set; get; }
     public int CurrentAtomId { set; get; }
 
-    List<Atom> atoms;
-    List<Bond> bonds;
+    //List<Atom> atoms;
+    //List<Bond> bonds;
      
     public Molecule(int id)
     {
-        atoms = new List<Atom>();
-        bonds = new List<Bond>();
+        //atoms = new List<Atom>();
+        //bonds = new List<Bond>();
         CurrentAtomId = 0;
         Id = id;
     }
 
-    public List<Bond> getBonds()
-    {
-        return bonds;
-    }
+ //   public List<Bond> getBonds()
+ //   {
+ //       return bonds;
+ //   }
 
-    public void addAtom(Atom a)
-    {
-        atoms.Add(a);
-    }
+ //   public void addAtom(Atom a)
+ //   {
+ //       atoms.Add(a);
+ //   }
 	
-	public void addBond(Bond b)
-	{
-		bonds.Add (b);
-	}
+	//public void addBond(Bond b)
+	//{
+	//	bonds.Add (b);
+	//}
 
-    public Atom getAtomById(int id)
-    {
-        foreach(Atom a in atoms)
-        {
-            if (a.Id == id)
-            {
-                return a;
-            }
-        }
-        return null;
-    }
+ //   public Atom getAtomById(int id)
+ //   {
+ //       foreach(Atom a in atoms)
+ //       {
+ //           if (a.Id == id)
+ //           {
+ //               return a;
+ //           }
+ //       }
+ //       return null;
+ //   }
 
-    public void deleteAtomById(int id)
-    {
-        foreach (Atom a in atoms)
-        {
-            if (a.Id == id)
-            {
-                atoms.Remove(a);
-                return;
-            }
-        }
-    }
+ //   public void deleteAtomById(int id)
+ //   {
+ //       foreach (Atom a in atoms)
+ //       {
+ //           if (a.Id == id)
+ //           {
+ //               atoms.Remove(a);
+ //               return;
+ //           }
+ //       }
+ //   }
 }

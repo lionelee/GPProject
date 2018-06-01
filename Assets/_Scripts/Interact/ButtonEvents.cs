@@ -98,7 +98,7 @@ public class ButtonEvents : MonoBehaviour {
 
         } else if(op == "Detach")
         {
-
+            GameManager.GetSelectedComponent().GetComponent<AtomsAction>().Detach();
         } else if(op == "Change Type")
         {
             //GameManager.GetSelectedComponent().GetComponent<Bond>().Type;
@@ -106,11 +106,11 @@ public class ButtonEvents : MonoBehaviour {
             //GameManager.GetSelectedComponent().GetComponent<Bond>().A2;
             bondTypeCanvas.SetActive(true);
         } else if(op == "Break"){
-
+            GameManager.GetSelectedComponent().GetComponent<BondsAction>().Break();
         }
         else
         {
-
+            
         }
     }
 }

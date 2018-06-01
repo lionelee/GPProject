@@ -9,6 +9,7 @@ public class Assembler : MonoBehaviour
     GameObject sbond;
     GameObject catom;
     int catomBondIndex;
+    int selfBondIndex;
     //Dictionary<GameObject, GameObject> sbonds;
     Dictionary<GameObject, bool> ContainObject;
     bool grabbed;
@@ -48,13 +49,9 @@ public class Assembler : MonoBehaviour
         //set sbond's parent to molecule
         sbond.transform.parent = catom.transform.parent;
 
-        //set abstract bond
-        Bond b = sbond.AddComponent<Bond>();
-        b.A1 = a1.Id;
-        b.A2 = a2.Id;
-        b.Type = BondType.SINGLE;
-        a1.addBond(b);
-        a2.addBond(b);
+        
+
+       
 
         //calculate expected position of this atom
         Vector3 expectedPos = catom.transform.position + 2 * (sbond.transform.position - catom.transform.position);
@@ -66,10 +63,10 @@ public class Assembler : MonoBehaviour
 
         //move and rotate grabbed atom to fix positon
         //translate
-        transform.parent.transform.position = expectedPos;
+        transform.parent.transform.position += expectedPos - transform.position;
         //rotate    
         Vector3 vec1 = (sbond.transform.position - catom.transform.position).normalized;
-        Vector3 vec2 = (transform.TransformDirection(a2.getAngle())).normalized;
+        Vector3 vec2 = (transform.TransformDirection(a2.getAngle(selfBondIndex))).normalized;
 
         float an = 180 - Vector3.Angle(vec1, vec2);
 
@@ -107,9 +104,18 @@ public class Assembler : MonoBehaviour
                 child.GetComponent<Atom>().Id = m.CurrentAtomId++;
             }
         }
+        GameManager.RemoveMolecule(parent);
 
+        //set abstract bond
+        Bond b = sbond.AddComponent<Bond>();
+        b.A1 = a1.gameObject;
+        b.A2 = a2.gameObject;
+        b.A1Index = catomBondIndex;
+        b.A2Index = selfBondIndex;
+        b.Type = BondType.SINGLE;
+        a1.addBond(sbond);
+        a2.addBond(sbond);
 
-        Destroy(parent);
 
         sbond = null;
     }
