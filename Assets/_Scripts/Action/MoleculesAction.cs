@@ -24,7 +24,8 @@ public class MoleculesAction : VRTK_InteractableObject
     public override void Grabbed(VRTK_InteractGrab grabbingObject)
     {
         base.Grabbed(grabbingObject);
-        foreach(Assembler assembler in gameObject.GetComponentsInChildren<Assembler>())
+        GameManager.SetRotatableMole(gameObject);
+        foreach (Assembler assembler in gameObject.GetComponentsInChildren<Assembler>())
         {
             assembler.SetGrabbed();
         }
@@ -36,6 +37,7 @@ public class MoleculesAction : VRTK_InteractableObject
     public override void Ungrabbed(VRTK_InteractGrab previousGrabbingObject)
     {
         print("ungrab");
+        GameManager.CancelLinearMovable();
         base.Ungrabbed(previousGrabbingObject);
 		/*gameObject.GetComponent<Rotator> ().enabled = false;
 		previousGrabbingObject.gameObject.GetComponent<RotateController> ().RemoveMolecule ();*/
@@ -124,6 +126,20 @@ public class MoleculesAction : VRTK_InteractableObject
             }
         }
 
+    }
+
+    public Vector3 GetJointPosition()
+    {
+        Vector3 pos = new Vector3();
+        foreach(Transform child in transform)
+        {
+            if(child.tag != "Component" && child.tag != "Bond")
+            {
+                pos = child.transform.position;
+                break;
+            }
+        }
+        return pos;
     }
 
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using VRTK;
 
 public enum InteracteMode
 {
@@ -96,12 +97,22 @@ public class GameManager : MonoBehaviour
     public static void SetRotatableMole(GameObject mole)
     {
         mole.GetComponent<Rotator>().ResetRotation();
-        GameObject.FindGameObjectWithTag("LeftController").GetComponent<RotateController>().SetMolecule(mole);
+        VRTK_DeviceFinder.GetControllerLeftHand().GetComponent<RotateController>().SetMolecule(mole);
     }
 
     public static void CancelRotatable()
     {
-        GameObject.FindGameObjectWithTag("LeftController").GetComponent<RotateController>().RemoveMolecule();
+        VRTK_DeviceFinder.GetControllerLeftHand().GetComponent<RotateController>().RemoveMolecule();
+    }
+
+    public static void SetLinearMovableMole(GameObject mole)
+    {
+        VRTK_DeviceFinder.GetControllerRightHand().GetComponent<LinearmoveController>().SetMolecule(mole);
+    }
+
+    public static void CancelLinearMovable()
+    {
+        VRTK_DeviceFinder.GetControllerRightHand().GetComponent<LinearmoveController>().RemoveMolecule();
     }
 
     /// <summary>

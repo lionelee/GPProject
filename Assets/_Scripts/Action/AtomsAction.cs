@@ -21,8 +21,8 @@ public class AtomsAction : VRTK_InteractableObject
         print("stop use atom");
         base.StopUsing(usingObject);
         
-
         GameManager.CancelComponentSelected();
+        GameManager.CancelRotatable();
         GameObject.FindGameObjectWithTag("EventManager").GetComponent<UiDisplayController>().ShowComponentOpCanvas(false, gameObject);
 
         GameManager.SwitchMode(InteracteMode.GRAB);
@@ -33,7 +33,6 @@ public class AtomsAction : VRTK_InteractableObject
 
     private void ShowComponentOperationCanvas()
     {
-        
         print("atom id: " + gameObject.GetComponent<Atom>().Id);
     }
 

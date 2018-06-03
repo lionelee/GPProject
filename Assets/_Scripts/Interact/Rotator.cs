@@ -5,8 +5,8 @@ using UnityEngine;
 public class Rotator : MonoBehaviour {
 
     public float rotationSpeed = 180.0f;
-	public float x = 0.0f;
-	public float y = 0.0f;
+	float x = 0.0f;
+	float y = 0.0f;
     Vector2 touchAxis;
         
 

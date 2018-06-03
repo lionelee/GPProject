@@ -2449,7 +2449,7 @@ Prefab:
     - target: {fileID: 224000012623161658, guid: d46cf6b1ad9d84a48ae7548a2a6b41b3,
         type: 2}
       propertyPath: m_AnchoredPosition.x
-      value: 942
+      value: 610
       objectReference: {fileID: 0}
     - target: {fileID: 224000012623161658, guid: d46cf6b1ad9d84a48ae7548a2a6b41b3,
         type: 2}
@@ -3875,7 +3875,7 @@ GameObject:
   - component: {fileID: 574995189}
   m_Layer: 0
   m_Name: LeftController
-  m_TagString: LeftController
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -8700,9 +8700,9 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1569711253}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9ad8cf54f862cf54ab7764f813dedd4a, type: 3}
+  m_Script: {fileID: 11500000, guid: e60e0da722d433c4a8e023824730cc99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &1569711264
