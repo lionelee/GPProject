@@ -63,12 +63,13 @@ public class MoleculesAction : VRTK_InteractableObject
         }
 
     }
-
+     
     //切换到选择单个原子的模式，这个操作应当应用到所有场景中的分子上，并且此时应该禁止生成新原子
     public override void StartUsing(VRTK_InteractUse usingObject)
     {
         print("use molecule");
         base.StartUsing(usingObject);
+        GameManager.SetRotatableMole(gameObject);
         GameManager.SwitchMode(InteracteMode.SELECT);
     }
 

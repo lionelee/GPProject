@@ -10,8 +10,6 @@ public enum InteracteMode
 
 public class GameManager : MonoBehaviour
 {
-    public GameObject newComponentPos;
-
     static Collider buildArea;
     static public Molecule curMolecule;
     static public List<GameObject> bonds;
@@ -93,6 +91,17 @@ public class GameManager : MonoBehaviour
     public static void CancelComponentSelected()
     {
         selectedComponent = null;
+    }
+
+    public static void SetRotatableMole(GameObject mole)
+    {
+        mole.GetComponent<Rotator>().ResetRotation();
+        GameObject.FindGameObjectWithTag("LeftController").GetComponent<RotateController>().SetMolecule(mole);
+    }
+
+    public static void CancelRotatable()
+    {
+        GameObject.FindGameObjectWithTag("LeftController").GetComponent<RotateController>().RemoveMolecule();
     }
 
     /// <summary>
@@ -187,6 +196,7 @@ public class GameManager : MonoBehaviour
         interacteMode = mode;
         if (mode == InteracteMode.SELECT)
         {
+            
             foreach (GameObject molecule in molecules)
             {
 
