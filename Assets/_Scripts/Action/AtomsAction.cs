@@ -12,6 +12,11 @@ public class AtomsAction : VRTK_InteractableObject
     {
         print("start use atom");
         base.StartUsing(usingObject);
+        if (GameManager.IsConnectable())
+        {
+            StopUsing(usingObject);
+            return;
+        }
         GameManager.SetSelectedComponent(gameObject);
         GameObject.FindGameObjectWithTag("EventManager").GetComponent<UiDisplayController>().ShowComponentOpCanvas(true, gameObject);
     }
@@ -20,13 +25,18 @@ public class AtomsAction : VRTK_InteractableObject
     {
         print("stop use atom");
         base.StopUsing(usingObject);
-        
+
+        //selection connect
+        if (GameManager.IsConnectable())
+        {
+            GameManager.SetConnectable(false);
+            gameObject.GetComponent<Assembler>().SelectionConnect(GameManager.GetSelectedComponent());
+        }
+
         GameManager.CancelComponentSelected();
         GameManager.CancelRotatable();
         GameObject.FindGameObjectWithTag("EventManager").GetComponent<UiDisplayController>().ShowComponentOpCanvas(false, gameObject);
-
         GameManager.SwitchMode(InteracteMode.GRAB);
-
 
     }
 

@@ -43,7 +43,7 @@ public class BondsAction : VRTK_InteractableObject
         List<GameObject> ignoreComponent = new List<GameObject>();
         ignoreComponent.Add(gameObject);
         //DFS
-        TraverseUtil.DfsMolecule(startAtom, ignoreComponent, objectToDetach);
+        StructureUtil.DfsMolecule(startAtom, ignoreComponent, objectToDetach);
 
         //只有在断开键后两边不属于同一个分子时，才生成新分子，否则只用删除bond即可
         if (!objectToDetach.Contains(gameObject.GetComponent<Bond>().A1))

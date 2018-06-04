@@ -32,6 +32,101 @@ public class Assembler : MonoBehaviour
         grabbed = false;
     }
 
+    public void SelectionConnect(GameObject otherAtom)
+    {
+        //先判断两个原子是否都有多余键
+        Atom a1 = otherAtom.GetComponent<Atom>();
+        Atom a2 = gameObject.GetComponent<Atom>();
+        if (a1.Connected == a1.Valence || a2.Connected == a2.Valence)
+        {
+            Debug.Log("can not be connected");
+            return;
+        }
+
+        GameObject selfMole = transform.parent.gameObject;
+        GameObject otherMole = otherAtom.transform.parent.gameObject;
+        if(selfMole == otherMole)
+        {
+            //两原子已经通过单键连接，直接返回不做操作。
+            if (StructureUtil.IsAdjacent(gameObject, otherAtom))
+                return;
+            else
+                ConnectAsRing(gameObject, otherAtom);
+        } else
+        {
+            ConnectAsChain(gameObject, otherAtom);
+        }
+    }
+
+
+    private void ConnectAsRing(GameObject atom1, GameObject atom2)
+    {
+        //分单路径成环和多路径成环
+    }
+
+
+    private void ConnectAsChain(GameObject atom1, GameObject atom2)
+    {
+        int a1Index = -1, a2Index = -1;
+        Atom a1 = atom1.GetComponent<Atom>();
+        Atom a2 = atom2.GetComponent<Atom>();
+        Vector3 a1Dir = a1.getAngle(a1Index);
+        Vector3 a2Dir = a2.getAngle(a2Index);
+
+        float length = GetBondLength(a1, a2);
+
+        GameObject prefebBond = (GameObject)Resources.Load("_Prefebs/SingleBond") as GameObject;
+        GameObject bond = Instantiate(prefebBond);
+        bond.GetComponent<Renderer>().material = Resources.Load("_Materials/Default") as Material;
+
+        Vector3 transformedDirection = atom1.transform.TransformDirection(new Vector3(a1Dir.x, a1Dir.y, a1Dir.z));
+
+        bond.transform.position = Vector3.Lerp(atom1.transform.position, atom1.transform.position + transformedDirection * length, 0.5f);
+        bond.transform.parent = atom1.transform.parent;
+
+        //bond
+        Vector3 scale = prefebBond.transform.lossyScale;
+        scale.y = length * 0.5f;
+        bond.transform.localScale = scale;
+        bond.transform.LookAt(atom1.transform.position);
+        bond.transform.Rotate(new Vector3(90, 0, 0));
+
+        //atom2
+        Vector3 Atom2expectedPos = atom1.transform.position + 2 * (bond.transform.position - atom1.transform.position);
+        atom2.transform.parent.transform.position += Atom2expectedPos - atom2.transform.position;
+        //rotate    
+        Vector3 vec1 = (bond.transform.position - atom1.transform.position).normalized;
+        Vector3 vec2 = (atom2.transform.TransformDirection(a2Dir)).normalized;
+
+        float an = 180 - Vector3.Angle(vec1, vec2);
+
+        if (vec1 == vec2)
+        {
+            print("rotate 180");
+            Vector3 axis = CaculateUtil.GetVerticalDir(vec1);
+            atom2.transform.parent.transform.RotateAround(atom2.transform.position, axis, 180);
+        }
+        else
+        {
+
+            atom2.transform.parent.transform.RotateAround(atom2.transform.position, Vector3.Cross(vec1, vec2), an);
+        }
+
+        MergeTwoMolecules(atom1.transform.parent.gameObject, atom2.transform.parent.gameObject);
+
+        //set abstract bond
+        Bond b = bond.AddComponent<Bond>();
+        bond.AddComponent<BondsAction>();
+        b.A1 = a1.gameObject;
+        b.A2 = a2.gameObject;
+        b.A1Index = a1Index;
+        b.A2Index = a2Index;
+        b.Type = BondType.SINGLE;
+        a1.addBond(bond);
+        a2.addBond(bond);
+    }
+
+
 	public void Connect()
 	{
         sbond.GetComponent<Renderer>().material = Resources.Load("_Materials/Default") as Material;
@@ -48,10 +143,6 @@ public class Assembler : MonoBehaviour
 
         //set sbond's parent to molecule
         sbond.transform.parent = catom.transform.parent;
-
-        
-
-       
 
         //calculate expected position of this atom
         Vector3 expectedPos = catom.transform.position + 2 * (sbond.transform.position - catom.transform.position);
@@ -81,30 +172,10 @@ public class Assembler : MonoBehaviour
             
             transform.parent.transform.RotateAround(transform.position, Vector3.Cross(vec1, vec2), an);
         }
-       
+
 
         //then merge two molecules
-        Molecule m = catom.transform.parent.gameObject.GetComponent<Molecule>();
-        GameObject parent = transform.parent.gameObject;
-        print("after");
-        print("child count: " + gameObject.transform.parent.transform.childCount);
-
-        List<GameObject> children = new List<GameObject>();
-        foreach(Transform child in transform.parent.transform)
-        {
-            children.Add(child.gameObject);
-        }
-        foreach(GameObject child in children)
-        {
-            if (child.tag != "Bond" && child.tag != "Component")
-                continue;
-            child.transform.parent = catom.transform.parent;
-            if (child.tag != "Bond")
-            {
-                child.GetComponent<Atom>().Id = m.CurrentAtomId++;
-            }
-        }
-        GameManager.RemoveMolecule(parent);
+        MergeTwoMolecules(catom.transform.parent.gameObject, transform.parent.gameObject);
 
         //set abstract bond
         Bond b = sbond.AddComponent<Bond>();
@@ -120,6 +191,45 @@ public class Assembler : MonoBehaviour
         sbond = null;
     }
 	   
+    private void MergeTwoMolecules(GameObject dstMole, GameObject otherMole)
+    {
+        Molecule mole = dstMole.GetComponent<Molecule>();
+
+        print("after");
+        print("child count: " + gameObject.transform.parent.transform.childCount);
+
+        List<GameObject> children = new List<GameObject>();
+        foreach (Transform child in otherMole.transform)
+        {
+            children.Add(child.gameObject);
+        }
+        foreach (GameObject child in children)
+        {
+            if (child.tag != "Bond" && child.tag != "Component")
+                continue;
+            child.transform.parent = dstMole.transform;
+            if (child.tag != "Bond")
+            {
+                child.GetComponent<Atom>().Id = mole.CurrentAtomId++;
+            }
+        }
+        GameManager.RemoveMolecule(otherMole);
+    }
+
+    private float GetBondLength(Atom a1, Atom a2)
+    {
+        string key;
+        if (a1.Symbol.Length <= a2.Symbol.Length && a1.Symbol[0] < a2.Symbol[0])
+        {
+            key = a1.Symbol + a2.Symbol;
+        }
+        else
+        {
+            key = a2.Symbol + a1.Symbol;
+        }
+        return Config.BondLengthTable[key];
+    }
+
 	void OnTriggerEnter(Collider collider)
 	{
         if (collider.isTrigger)
@@ -138,7 +248,7 @@ public class Assembler : MonoBehaviour
 
 
         Atom otherAtom = collider.gameObject.GetComponent<Atom>();
-        Atom thisAtom = collider.gameObject.GetComponent<Atom>();
+        Atom thisAtom = gameObject.GetComponent<Atom>();
 
         if (otherAtom.Connected == otherAtom.Valence || thisAtom.Connected == thisAtom.Valence)
         {
@@ -150,16 +260,7 @@ public class Assembler : MonoBehaviour
         Vector3 thisAtomPos = transform.position;
 
         //获取匹配的化学键位置
-        string key;
-        if (otherAtom.Symbol.Length <= thisAtom.Symbol.Length && otherAtom.Symbol[0] < thisAtom.Symbol[0])
-        {
-            key = otherAtom.Symbol + thisAtom.Symbol;
-        }
-        else
-        {
-            key = otherAtom.Symbol + otherAtom.Symbol;
-        }
-        float length = Config.BondLengthTable[key];
+        float length = GetBondLength(otherAtom, thisAtom);
 
         List<Vector4> otherAtomVbonds = otherAtom.vbonds;
         float minDistance = float.MaxValue;

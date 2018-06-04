@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TraverseUtil : MonoBehaviour {
+public class StructureUtil : MonoBehaviour {
     /// <summary>
     /// 从 start 原子开始进行 DFS 遍历分子，将遍历结果加到 reault list 中，excepted list 中的组件会在开始时设为已访问
     /// </summary>
@@ -64,5 +64,21 @@ public class TraverseUtil : MonoBehaviour {
                 }
             }
         }
+    }
+
+    /// <summary>
+    /// 检查两个原子是否相邻，即恰好位于某个键的两端。
+    /// </summary>
+    /// <param name="atom1"></param>
+    /// <param name="atom2"></param>
+    /// <returns></returns>
+    public static bool IsAdjacent(GameObject atom1, GameObject atom2)
+    {
+        foreach(GameObject bond in atom1.GetComponent<Atom>().Bonds)
+        {
+            if (atom2 == bond.GetComponent<Bond>().A1 || atom2 == bond.GetComponent<Bond>().A2)
+                return true;
+        }
+        return false;
     }
 }

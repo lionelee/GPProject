@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
     static public List<GameObject> molecules;
     static public InteracteMode interacteMode;
     static GameObject selectedComponent;
+    static bool connectable;
     static int currentMoleId;
 
 
@@ -89,6 +90,15 @@ public class GameManager : MonoBehaviour
         selectedComponent = component;
     }
 
+    public static bool IsConnectable()
+    {
+        return connectable;
+    }
+    public static void SetConnectable(bool stat)
+    {
+        connectable = stat;
+    }
+
     public static void CancelComponentSelected()
     {
         selectedComponent = null;
@@ -114,6 +124,7 @@ public class GameManager : MonoBehaviour
     {
         VRTK_DeviceFinder.GetControllerRightHand().GetComponent<LinearmoveController>().RemoveMolecule();
     }
+
 
     /// <summary>
     /// Generate an atom model to the ray pointer,

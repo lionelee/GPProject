@@ -95,7 +95,7 @@ public class ButtonEvents : MonoBehaviour {
 
         if(op == "Connect")
         {
-
+            GameManager.SetConnectable(true);
         } else if(op == "Detach")
         {
             GameManager.GetSelectedComponent().GetComponent<AtomsAction>().Detach();
@@ -110,7 +110,7 @@ public class ButtonEvents : MonoBehaviour {
         }
         else
         {
-            
+            return;
         }
     }
 }
