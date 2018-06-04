@@ -4,59 +4,85 @@ using System.IO;
 
 public class FileOperator
 {
-    public static void SaveModel(string path)
+    public static string dirpath = Directory.GetCurrentDirectory();
+    public static DirectoryInfo dir = new DirectoryInfo(dirpath);
+
+    static string getPath(string name)
     {
-        /*FileStream fs = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+        return dirpath + "\\" + name + ".smol";
+    }
+
+    public static void SaveModel(string name)
+    {
+        string path = getPath(name);
+        FileStream fs = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite);
         StreamWriter sw = new StreamWriter(fs);
         foreach(GameObject mole in GameManager.molecules)
         {
-            foreach(GameObject at in mole.GetComponentsInChildren<GameObject>())
+            sw.WriteLine(mole.GetComponent<Molecule>().toString());
+            foreach (Transform child in mole.transform)
             {
-                string s = at.GetComponent<Atom>().toString() + at.transform.position.ToString();
+                if (child.tag != "Bond" && child.tag != "Component")
+                    continue;
+                string s;
+                if (child.tag == "Bond")
+                {
+                    s = child.GetComponent<Bond>().toString();
+                }
+                else
+                {
+                    s = child.GetComponent<Atom>().toString() + child.position.ToString();
+                }
                 sw.WriteLine(s);
-            }
-            foreach(Bond b in mole.GetComponent<Molecule>().getBonds())
-            {
-                sw.WriteLine(b.toString());
             }
         }
         sw.Close();
-        fs.Close();*/
+        fs.Close();
     }
 
-    public static void ReadModel(string path)
+    public static int ReadModel(string name)
     {
-        /*FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read);
+        string path = getPath(name);
+        FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read);
         StreamReader sr = new StreamReader(fs);
 
         GameManager gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
-        GameObject mole = gm.GenerateMolecule();
+        GameObject mole = null;
 
         while (sr.Peek() > 0)
         {
             string line = sr.ReadLine();
             string[] sArray = line.Split(' ');
-            if(sArray[0] == "Bond")
+            if(sArray[0] == "Molecule")
             {
                 if (sArray.Length != 4)
                 {
                     Debug.Log("File Damaged.");
-                    return;
+                    return -1;
                 }
-                Bond b = new Bond(int.Parse(sArray[2]), int.Parse(sArray[3]));
-                mole.GetComponent<Molecule>().addBond(b);
+                mole = gm.GenerateMolecule();
+            }
+            else if(sArray[0] == "Bond")
+            {
+                if (sArray.Length != 4)
+                {
+                    Debug.Log("File Damaged.");
+                    return -1;
+                }
+                gm.GenBondForMole(int.Parse(sArray[1]), int.Parse(sArray[2]), int.Parse(sArray[3]), mole);
             }
             else
             {
                 if (sArray.Length != 4)
                 {
                     Debug.Log("File Damaged.");
-                    return;
+                    return -1;
                 }
                 gm.GenAtomForMole(sArray, mole);
             }
         }
         sr.Close();
-        fs.Close();*/
+        fs.Close();
+        return 0;
     }
 }

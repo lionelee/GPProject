@@ -12,16 +12,6 @@ public class ButtonEvents : MonoBehaviour {
     public GameObject valenceCanvas;
     public GameObject bondTypeCanvas;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
     public void OnAtomButtonClick(string symbol)
     {
         valenceCanvas.GetComponent<Text>().text = symbol;

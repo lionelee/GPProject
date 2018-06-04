@@ -63,7 +63,34 @@ public class Atom : MonoBehaviour
             }
         }
         return Vector3.zero;
-	}
+    }
+
+    public int getVbondIdx(Vector3 pos)
+    {
+        int idx = -1;
+        float minDistance = float.MaxValue;
+
+        for (int i = 0; i < vbonds.Count; i++)
+        {
+            if (vbonds[i].w == 1)
+                continue;
+            Vector3 dir = transform.TransformDirection(new Vector3(vbonds[i].x, vbonds[i].y, vbonds[i].z));
+            float distance = (transform.position + dir - pos).sqrMagnitude;
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                idx = i;
+            }
+        }
+        return idx;
+    }
+
+    public void setVbondUsed(int idx)
+    {
+        Vector4 usedVbond = vbonds[idx];
+        usedVbond.w = 1;
+        vbonds[idx] = usedVbond;
+    }
     
 
     public string toString()

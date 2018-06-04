@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 23193504134244564}
   - component: {fileID: 54112028556681112}
   - component: {fileID: 114278656288111252}
-  - component: {fileID: 135737409452539718}
+  - component: {fileID: 135542199914174224}
   m_Layer: 0
   m_Name: Hydrogen
   m_TagString: Component
@@ -124,7 +124,7 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!135 &135737409452539718
+--- !u!135 &135542199914174224
 SphereCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}

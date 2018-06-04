@@ -12,7 +12,6 @@ public class MoleculesAction : VRTK_InteractableObject
 
     public void SetConnectableAtom(GameObject atom)
     {
-        print("setConnectable");
         connectableAtom = atom;
     }
 
@@ -36,7 +35,6 @@ public class MoleculesAction : VRTK_InteractableObject
 
     public override void Ungrabbed(VRTK_InteractGrab previousGrabbingObject)
     {
-        print("ungrab");
         GameManager.CancelLinearMovable();
         base.Ungrabbed(previousGrabbingObject);
 		/*gameObject.GetComponent<Rotator> ().enabled = false;
@@ -44,8 +42,6 @@ public class MoleculesAction : VRTK_InteractableObject
 
         if (GameManager.MoleculeInBuildArea(gameObject))
         {
-
-            print("in build area");
             GameManager.PutIntoBuildArea(gameObject);
             foreach (Assembler assembler in gameObject.GetComponentsInChildren<Assembler>())
             {
@@ -60,7 +56,6 @@ public class MoleculesAction : VRTK_InteractableObject
         }
         else
         {
-            print("out of build area");
             GameManager.RemoveMolecule(gameObject);
         }
 
@@ -69,7 +64,6 @@ public class MoleculesAction : VRTK_InteractableObject
     //切换到选择单个原子的模式，这个操作应当应用到所有场景中的分子上，并且此时应该禁止生成新原子
     public override void StartUsing(VRTK_InteractUse usingObject)
     {
-        print("use molecule");
         base.StartUsing(usingObject);
         GameManager.SetRotatableMole(gameObject);
         GameManager.SwitchMode(InteracteMode.SELECT);

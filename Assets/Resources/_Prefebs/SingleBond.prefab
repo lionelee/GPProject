@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 33661324454206684}
   - component: {fileID: 136252685983010162}
   - component: {fileID: 23899637159745962}
-  - component: {fileID: 54641349742493352}
+  - component: {fileID: 54152738520827718}
   m_Layer: 0
   m_Name: SingleBond
   m_TagString: Bond
@@ -57,7 +57,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: dafd66241f8fda4479ad5329e5baf81a, type: 2}
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -84,7 +84,7 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1286712283456828}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
---- !u!54 &54641349742493352
+--- !u!54 &54152738520827718
 Rigidbody:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}

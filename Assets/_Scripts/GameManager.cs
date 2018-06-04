@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using VRTK;
@@ -15,7 +14,11 @@ public class GameManager : MonoBehaviour
     static public Molecule curMolecule;
     static public List<GameObject> bonds;
     static public List<GameObject> molecules;
+
     static public InteracteMode interacteMode;
+
+    static public GameObject prefebMole;
+
     static GameObject selectedComponent;
     static bool connectable;
     static int currentMoleId;
@@ -29,6 +32,7 @@ public class GameManager : MonoBehaviour
         molecules = new List<GameObject>();
         interacteMode = InteracteMode.GRAB;
         currentMoleId = 0;
+        prefebMole = (GameObject)Resources.Load("_Prefebs/Molecule") as GameObject;
     }
 
     // Update is called once per frame
@@ -172,9 +176,22 @@ public class GameManager : MonoBehaviour
         generatedAtom.transform.Translate(mole.transform.position - generatedAtom.transform.position);
     }
 
+    #region /* methods for operating bonds */
+    //connect two atoms by selection
+    public void ConnectAtoms(GameObject obj1, GameObject obj2)
+    { }
+
+    //disconnect two atoms by selection
+    public void DisonnectAtoms(GameObject obj1, GameObject obj2)
+    {
+
+    }
+    #endregion
+
+    #region /* methods for importing model from file */
+
     public GameObject GenerateMolecule()
     {
-        GameObject prefebMole = (GameObject)Resources.Load("_Prefebs/Molecule") as GameObject;
         GameObject mole = Instantiate(prefebMole);
         molecules.Add(mole);
         Molecule molecule = mole.AddComponent<Molecule>();
@@ -184,22 +201,22 @@ public class GameManager : MonoBehaviour
 
     public void GenAtomForMole(string[] info, GameObject mole)
     {
+        if (mole == null) return;
         string symbol = info[0];
-        GameObject prefebAtom;
-        if (symbol == "C")
+        GameObject prefebAtom = null;
+        switch (symbol)
         {
-            prefebAtom = (GameObject)Resources.Load("_Prefebs/Carbon") as GameObject;
+            case "C":
+                prefebAtom = (GameObject)Resources.Load("_Prefebs/Carbon") as GameObject;
+                break;
+            case "H":
+                prefebAtom = (GameObject)Resources.Load("_Prefebs/Hydrogen") as GameObject;
+                break;
+            case "O":
+                prefebAtom = (GameObject)Resources.Load("_Prefebs/Oxygen") as GameObject;
+                break;
+            default: return;
         }
-        else if (symbol == "H")
-        {
-            prefebAtom = (GameObject)Resources.Load("_Prefebs/Hydrogen") as GameObject;
-
-        }
-        else if (symbol == "O")
-        {
-            prefebAtom = (GameObject)Resources.Load("_Prefebs/Oxygen") as GameObject;
-        }
-        else return;
 
         GameObject generatedAtom = Instantiate(prefebAtom);
         generatedAtom.transform.position = TypeConvert.StrToVec3(info[3]);
@@ -210,7 +227,63 @@ public class GameManager : MonoBehaviour
         atom.vbonds = Config.BondAngleTable[symbol];
 
         generatedAtom.transform.parent = mole.transform;
-        generatedAtom.transform.Translate(mole.transform.position - generatedAtom.transform.position);
+        //generatedAtom.transform.Translate(mole.transform.position - generatedAtom.transform.position);
+    }
+
+    public void GenBondForMole(int type, int a1, int a2, GameObject mole)
+    {
+        if (mole == null) return;
+        GameObject prefebBond = null;
+
+        switch (type)
+        {
+            case 0:
+                prefebBond = (GameObject)Resources.Load("_Prefebs/SingleBond") as GameObject;
+                break;
+            case 1:
+                prefebBond = (GameObject)Resources.Load("_Prefebs/DoubleBond") as GameObject;
+                break;
+            case 2:
+                prefebBond = (GameObject)Resources.Load("_Prefebs/TrippleBond") as GameObject;
+                break;
+            default:
+                break;
+        }
+        GameObject generatedBond = Instantiate(prefebBond);
+
+        // find atoms connected by this bond
+        GameObject atom1 = null, atom2 = null;
+        foreach(Transform child in mole.transform)
+        {
+            if (child.tag != "Bond" && child.tag != "Component")
+                continue;
+            if (child.tag != "Bond")
+            {
+                if (child.GetComponent<Atom>().Id == a1)
+                    atom1 = child.gameObject;
+                if (child.GetComponent<Atom>().Id == a2)
+                    atom2 = child.gameObject;
+            }
+        }
+        if (atom1 == null || atom2 == null)
+            return;
+
+        // locate the bond
+        Vector3 pos1 = atom1.transform.position, pos2 = atom2.transform.position;
+        generatedBond.transform.position = Vector3.Lerp(pos1, pos2, 0.5f);
+        Vector3 scale = prefebBond.transform.lossyScale;
+        scale.y = Vector3.Distance(pos1, pos2) * 0.5f;
+        generatedBond.transform.localScale = scale;
+        generatedBond.transform.LookAt(pos2);
+        generatedBond.transform.Rotate(new Vector3(90, 0, 0));
+
+        // set abstract bond
+        Bond b = generatedBond.AddComponent<Bond>();
+        b.A1 = atom1;
+        b.A2 = atom2;
+        b.Type = BondType.SINGLE;
+        atom1.GetComponent<Atom>().addBond(generatedBond);
+        atom2.GetComponent<Atom>().addBond(generatedBond);
     }
 
     public static void SwitchMode(InteracteMode mode)
@@ -253,4 +326,5 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    #endregion
 }
