@@ -1,19 +1,23 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using VRTK;
 
-
+public enum InteracteMode
+{
+    GRAB, SELECT
+}
 
 public class GameManager : MonoBehaviour
 {
-    public GameObject newComponentPos;
-
     static Collider buildArea;
     static public Molecule curMolecule;
     static public List<GameObject> bonds;
     static public List<GameObject> molecules;
     static public GameObject prefebMole;
+    static public InteracteMode interacteMode;
     static GameObject selectedComponent;
+    static bool connectable;
     static int currentMoleId;
 
 
@@ -23,6 +27,7 @@ public class GameManager : MonoBehaviour
         Config.Init();
         buildArea = GameObject.FindGameObjectWithTag("BuildArea").GetComponent<Collider>();
         molecules = new List<GameObject>();
+        interacteMode = InteracteMode.GRAB;
         currentMoleId = 0;
         prefebMole = (GameObject)Resources.Load("_Prefebs/Molecule") as GameObject;
     }
@@ -51,12 +56,20 @@ public class GameManager : MonoBehaviour
 
     public static void RemoveMolecule(GameObject mole)
     {
-        Destroy(mole);
         molecules.Remove(mole);
-        foreach (Transform child in mole.transform)
-        {
-            Destroy(child.gameObject);
-        }
+        Destroy(mole);
+    }
+
+    public static GameObject NewMolecule()
+    {
+        GameObject prefebMole = (GameObject)Resources.Load("_Prefebs/Molecule") as GameObject;
+        GameObject mole = Instantiate(prefebMole);
+
+        molecules.Add(mole);
+        Molecule molecule = mole.AddComponent<Molecule>();
+        molecule.Id = currentMoleId++;
+
+        return mole;
     }
 
     public static void RemoveAtom(GameObject atom)
@@ -78,11 +91,40 @@ public class GameManager : MonoBehaviour
         selectedComponent = component;
     }
 
+    public static bool IsConnectable()
+    {
+        return connectable;
+    }
+    public static void SetConnectable(bool stat)
+    {
+        connectable = stat;
+    }
+
     public static void CancelComponentSelected()
     {
         selectedComponent = null;
     }
-    
+
+    public static void SetRotatableMole(GameObject mole)
+    {
+        mole.GetComponent<Rotator>().ResetRotation();
+        VRTK_DeviceFinder.GetControllerLeftHand().GetComponent<RotateController>().SetMolecule(mole);
+    }
+
+    public static void CancelRotatable()
+    {
+        VRTK_DeviceFinder.GetControllerLeftHand().GetComponent<RotateController>().RemoveMolecule();
+    }
+
+    public static void SetLinearMovableMole(GameObject mole)
+    {
+        VRTK_DeviceFinder.GetControllerRightHand().GetComponent<LinearmoveController>().SetMolecule(mole);
+    }
+
+    public static void CancelLinearMovable()
+    {
+        VRTK_DeviceFinder.GetControllerRightHand().GetComponent<LinearmoveController>().RemoveMolecule();
+    }
 
     public static void GenerateAtom(string symbol, int valence)
     {
@@ -91,12 +133,7 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < newComponentPos.transform.childCount; i++)
             DestroyObject(newComponentPos.transform.GetChild(i).gameObject);
 
-        GameObject prefebMole = (GameObject)Resources.Load("_Prefebs/Molecule") as GameObject;
-        GameObject mole = Instantiate(prefebMole);
-
-        molecules.Add(mole);
-        Molecule molecule = mole.AddComponent<Molecule>();
-        molecule.Id = currentMoleId++;
+        GameObject mole = NewMolecule();
 
         mole.transform.parent = newComponentPos.transform;
         mole.transform.Translate(newComponentPos.transform.position - mole.transform.position);
@@ -120,7 +157,7 @@ public class GameManager : MonoBehaviour
         GameObject generatedAtom = Instantiate(prefebAtom);
 
         Atom atom = generatedAtom.AddComponent<Atom>();
-        atom.Id = molecule.CurrentAtomId++;
+        atom.Id = mole.GetComponent<Molecule>().CurrentAtomId++;
         atom.Symbol = symbol;
         atom.Valence = valence;
         atom.vbonds = new List<Vector4>(Config.BondAngleTable[symbol]);
@@ -238,4 +275,45 @@ public class GameManager : MonoBehaviour
         atom2.GetComponent<Atom>().addBond(generatedBond);
     }
     #endregion
+
+    public static void SwitchMode(InteracteMode mode)
+    {
+        interacteMode = mode;
+        if (mode == InteracteMode.SELECT)
+        {
+            
+            foreach (GameObject molecule in molecules)
+            {
+
+                for (int i = 0; i < molecule.transform.childCount; i++)
+                {
+                    GameObject child = molecule.transform.GetChild(i).gameObject;
+                    if (child.GetComponent<Atom>() != null)
+                    {
+                        AtomsAction aa = child.AddComponent<AtomsAction>();
+                        aa.touchHighlightColor = Config.UsingSelectedColor;
+                        aa.isUsable = true;
+                        aa.holdButtonToUse = false;
+                    }
+                    else
+                    {
+                        BondsAction ba = child.AddComponent<BondsAction>();
+                        ba.touchHighlightColor = Config.UsingSelectedColor;
+                        ba.isUsable = true;
+                        ba.holdButtonToUse = false;
+                    }
+                }
+            }
+
+            GameObject.FindGameObjectWithTag("EventManager").GetComponent<UiDisplayController>().ShowSelectAtomCanvas(false);
+        } else
+        {
+            foreach(GameObject molecule in molecules)
+            {
+                molecule.GetComponent<MoleculesAction>().DisableAllComponent();
+            }
+
+        }
+    }
+    
 }

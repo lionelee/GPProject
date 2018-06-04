@@ -8,6 +8,8 @@ public class Config{
     static public Dictionary<string, List<Vector4>> BondAngleTable = new Dictionary<string, List<Vector4>>();
     static public Dictionary<string, float> BondLengthTable = new Dictionary<string, float>();
 
+    static public Color UsingSelectedColor = new Color(26 / 255.0f, 160 / 255.0f, 1, 0);
+
     static public void Init()
     {
         // initialize valence table

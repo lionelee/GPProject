@@ -17,6 +17,7 @@ TagManager:
   - NewComponentPos
   - EventManager
   - Bond
+  - ExcludeTeleport
   layers:
   - Default
   - TransparentFX

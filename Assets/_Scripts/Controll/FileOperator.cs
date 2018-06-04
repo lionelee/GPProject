@@ -19,7 +19,7 @@ public class FileOperator
         StreamWriter sw = new StreamWriter(fs);
         foreach(GameObject mole in GameManager.molecules)
         {
-            sw.WriteLine(mole.GetComponent<Molecule>().toString());
+            sw.WriteLine("Molecule");
             foreach (Transform child in mole.transform)
             {
                 if (child.tag != "Bond" && child.tag != "Component")
@@ -55,11 +55,6 @@ public class FileOperator
             string[] sArray = line.Split(' ');
             if(sArray[0] == "Molecule")
             {
-                if (sArray.Length != 4)
-                {
-                    Debug.Log("File Damaged.");
-                    return -1;
-                }
                 mole = gm.GenerateMolecule();
             }
             else if(sArray[0] == "Bond")

@@ -4,12 +4,11 @@ using UnityEngine;
 
 public class Rotator : MonoBehaviour {
 
-
-	public float rotationSpeed = 100.0f;
-	public float x = 0.0f;
-	public float y = 0.0f;
+    public float rotationSpeed = 180.0f;
+	float x = 0.0f;
+	float y = 0.0f;
     Vector2 touchAxis;
-
+        
 
     public void SetTouchAxis(Vector2 data)
     {
@@ -22,15 +21,10 @@ public class Rotator : MonoBehaviour {
 		y = angles.x;
 	}
 
-	public void reset(){
+	public void ResetRotation(){
 		Vector3 angles = transform.eulerAngles;
 		x = angles.y;
 		y = angles.x;
-	}
-
-	// Update is called once per frame
-	void Update () {
-		
 	}
 
     private void FixedUpdate()

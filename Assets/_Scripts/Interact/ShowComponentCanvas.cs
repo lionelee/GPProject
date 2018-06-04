@@ -19,6 +19,7 @@ public class ShowComponentCanvas : VRTK_InteractableObject
     public override void StartUsing(VRTK_InteractUse usingObject)
     {
         base.StartUsing(usingObject);
-        GameObject.FindGameObjectWithTag("EventManager").GetComponent<UiDisplayController>().ShowSelectAtomCanvas(true);
+        if(GameManager.interacteMode == InteracteMode.GRAB)
+            GameObject.FindGameObjectWithTag("EventManager").GetComponent<UiDisplayController>().ShowSelectAtomCanvas(true);
     }
 }
