@@ -25,7 +25,6 @@ public class BuildAreaColliderTrigger : MonoBehaviour {
         if (other.gameObject.tag == "Component")
         {
             HighlightMark.GetComponent<Renderer>().material = highlight;
-            print("enter");
         }
     }
 
@@ -34,7 +33,6 @@ public class BuildAreaColliderTrigger : MonoBehaviour {
         if (other.gameObject.tag == "Component")
         {
             HighlightMark.GetComponent<Renderer>().material = neon;
-            print("exit");
         }
     }
 }

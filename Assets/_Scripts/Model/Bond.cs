@@ -8,13 +8,13 @@ public enum BondType
 }
 
 public class Bond : MonoBehaviour{
-    public int A1 { get; set; }
-    public int A2 { get; set; }
+    public GameObject A1 { get; set; }
+    public GameObject A2 { get; set; }
     public BondType Type { get; set; }
 
     public string toString()
     {
-        return "Bond" + " " + Type.ToString() + " " + A1.ToString() + " " + A1.ToString();
+        return "Bond" + " " + Type.ToString() + " " + A1.GetComponent<Atom>().Id.ToString() + " " + A1.GetComponent<Atom>().Id.ToString();
     }
 }
 

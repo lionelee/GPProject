@@ -10,7 +10,7 @@ public class Assembler : MonoBehaviour
 
     GameObject catom;
     int catomBondIndex;
-    //Dictionary<GameObject, GameObject> sbonds;
+    Vector3 expectedPos;
     Dictionary<GameObject, bool> ContainObject;
     bool grabbed;
 
@@ -34,14 +34,12 @@ public class Assembler : MonoBehaviour
     
 	public void Connect()
 	{
+        if (sbond == null)
+            return;
+
         sbond.GetComponent<Renderer>().material = Resources.Load("_Materials/Default") as Material;
         Destroy(satom);
-
-        print("child count: " + gameObject.transform.parent.transform.childCount);
-        for(int i = 0;i < gameObject.transform.parent.transform.childCount; i++)
-        {
-            print("child info: " + gameObject.transform.parent.transform.GetChild(i));
-        }
+        
         // get molecules and atoms
         Molecule m1 = catom.GetComponentInParent<Molecule>();
         Molecule m2 = GetComponentInParent<Molecule>();
@@ -50,71 +48,47 @@ public class Assembler : MonoBehaviour
 
         //set sbond's parent to molecule
         sbond.transform.parent = catom.transform.parent;
-
         //set abstract bond
         Bond b = sbond.AddComponent<Bond>();
-        b.A1 = a1.Id;
-        b.A2 = a2.Id;
+        b.A1 = catom;
+        b.A2 = transform.gameObject;
         b.Type = BondType.SINGLE;
-        a1.addBond(b);
-        a2.addBond(b);
+        a1.addBond(sbond);
+        a2.addBond(sbond);
 
         //calculate expected position of this atom
-        Vector3 expectedPos = catom.transform.position + 2 * (sbond.transform.position - catom.transform.position);
+        //Vector3 expectedPos = catom.transform.position + 2 * (sbond.transform.position - catom.transform.position);
 
-        // 更新目标原子和抓取原子的vbond,标记一个化学键为已使用
-        Vector4 usedVbond = a1.vbonds[catomBondIndex];
-        usedVbond.w = 1;
-        a1.vbonds[catomBondIndex] = usedVbond;
+        // 更新目标原子的vbond,标记一个化学键为已使用,抓取原子的vbond由之后的getAngle()函数更新
+        a1.setVbondUsed(catomBondIndex);
 
         //move and rotate grabbed atom to fix positon
         //translate
         transform.parent.transform.position += expectedPos - transform.position;
+
         //rotate    
         Vector3 vec1 = (sbond.transform.position - catom.transform.position).normalized;
         Vector3 vec2 = (transform.TransformDirection(a2.getAngle())).normalized;
-
-        float an = Vector3.Angle(vec1, vec2);
-
-        print("catom pos:" + catom.transform.position + "sbond pos:" + sbond.transform.position);
-        print("catom dir: " + vec1);
-        print(catom.transform.TransformDirection(new Vector3(a1.vbonds[catomBondIndex].x, a1.vbonds[catomBondIndex].y, a1.vbonds[catomBondIndex].z)));
-        print("self dir: " + vec2);
-
-        print("angle: " + an);
-
+        float an = 180 - Vector3.Angle(vec1, vec2);
         if (vec1 == vec2)
         {
-            print("rotate 180");
             Vector3 axis = CaculateUtil.GetVerticalDir(vec1);
             transform.parent.transform.RotateAround(transform.position, axis, 180);
         }
         else
         {
-            
             transform.parent.transform.RotateAround(transform.position, Vector3.Cross(vec1, vec2), an);
         }
-        
-
-        //transform.parent.transform.RotateAround(transform.position, Vector3.Cross(vec1, vec2), an);
-        /*Vector3 vec1 = catom.transform.TransformDirection(angle);
-        Vector3 vec2 = -transform.TransformDirection(a2.getAngle());
-
-        print(vec1);
-        print(vec2);
-        float an = Vector3.Angle(vec1, vec2);
-        print("angle: " + an);
-        transform.parent.transform.RotateAround(transform.position, Vector3.Cross(vec1, vec2), an);*/
-
-        //then merge two molecules
+       
+        //then merge the two molecules
         Molecule m = catom.transform.parent.gameObject.GetComponent<Molecule>();
         GameObject parent = transform.parent.gameObject;
         List<GameObject> children = new List<GameObject>();
-        foreach (Transform child in transform.parent.transform)
+        foreach(Transform child in transform.parent.transform)
         {
             children.Add(child.gameObject);
         }
-        foreach (GameObject child in children)
+        foreach(GameObject child in children)
         {
             if (child.tag != "Bond" && child.tag != "Component")
                 continue;
@@ -125,90 +99,13 @@ public class Assembler : MonoBehaviour
             }
         }
 
+        //destroy old molecule
         Destroy(parent);
         sbond = null;
-
-        /*if (catom != null) {
-            DeleteSbond(catom);
-            // get molecules and atoms
-            Molecule m1 = catom.GetComponentInParent<Molecule>();
-            Molecule m2 = GetComponentInParent<Molecule>();
-            Atom a1 = catom.GetComponent<Atom>();
-            Atom a2 = GetComponent<Atom>();
-
-            if (a1.Connected == a1.Valence || a2.Connected == a2.Valence)
-            {
-                return;
-            }
-
-            //calculate expected position of this atom
-            string key;
-            if (a1.Symbol.Length <= a2.Symbol.Length && a1.Symbol[0] < a2.Symbol[0])
-            {
-                key = a1.Symbol + a2.Symbol;
-            }
-            else
-            {
-                key = a2.Symbol + a1.Symbol;
-            }
-            float length = Config.BondLengthTable[key];
-            Vector3 pos = catom.transform.position;
-            Vector3 angle = a1.getAngle();
-            Vector3 expectedPos = angle * length + pos;
-
-            //draw bond
-            GameObject prefebMole = (GameObject)Resources.Load("_Prefebs/SingleBond") as GameObject;
-            GameObject bond = Instantiate(prefebMole);
-
-            bond.transform.position = Vector3.Lerp(pos, expectedPos, 0.5f);
-            Vector3 scale = prefebMole.transform.lossyScale;
-            scale.y = length * 0.5f;
-            bond.transform.localScale = scale;
-            bond.transform.LookAt(expectedPos);
-            bond.transform.Rotate(new Vector3(90, 0, 0));
-            bond.transform.parent = catom.transform.parent;
-
-            //set abstract bond
-            Bond b = bond.AddComponent<Bond>();
-            b.A1 = a1.Id;
-            b.A2 = a2.Id;
-            b.Type = BondType.SINGLE;
-            a1.addBond(b);
-            a2.addBond(b);
-
-            //move and rotate this atom and the molecule to match bond angle vector
-            transform.parent.transform.position += expectedPos - transform.position;
-
-            Vector3 vec1 = catom.transform.TransformDirection(angle);
-            Vector3 vec2 = transform.TransformDirection(a2.getAngle());
-            Vector3 axis = Vector3.Cross(vec1, vec2);
-
-            float an = Vector3.Angle(vec1, vec2);
-            if(axis == Vector3.zero)
-            {
-                axis = new Vector3(0, 1, 0);
-                an = 180.0f;
-            }
-            transform.parent.transform.RotateAround(transform.position, axis, an);
-            
-            //merge two molecules into one
-            Molecule m = catom.transform.parent.gameObject.GetComponent<Molecule>();
-            GameObject parent = transform.parent.gameObject;
-            foreach (Transform child in transform.parent.transform)
-            {
-                child.parent = catom.transform.parent;
-                if (child.gameObject.tag != "Bond")
-                {
-                    child.gameObject.GetComponent<Atom>().Id = m.CurrentAtomId++;
-                }
-            }
-
-            Destroy(parent);
-		}*/
     }
-	   
-	void OnTriggerEnter(Collider collider)
-	{
+
+    void OnTriggerEnter(Collider collider)
+    {
         if (collider.isTrigger)
             return;
 
@@ -218,17 +115,26 @@ public class Assembler : MonoBehaviour
         if (!grabbed)
             return;
 
-        print("enter trigger");
-        //DeleteSbond(collider.gameObject);
-        if(sbond != null)
+        /*if (sbond != null)
         {
             Destroy(sbond);
-        }
+            Destroy(satom);
+        }*/
 
         Atom otherAtom = collider.gameObject.GetComponent<Atom>();
-        Atom thisAtom = collider.gameObject.GetComponent<Atom>();
-        
-        if (otherAtom.Connected == Mathf.Abs(otherAtom.Valence) || thisAtom.Connected == Mathf.Abs(thisAtom.Valence))
+        Atom thisAtom = transform.gameObject.GetComponent<Atom>();
+        uint otherValence = (uint)Mathf.Abs(otherAtom.Valence);
+        otherValence = otherValence == 0 ? 1 : otherValence;
+        uint thisValence = (uint)Mathf.Abs(thisAtom.Valence);
+        thisValence = thisValence == 0 ? 1 : thisValence;
+
+        if (otherAtom.Symbol != thisAtom.Symbol)
+        {
+            int bondValence = otherAtom.Valence / (int)otherValence + thisAtom.Valence / (int)thisValence;
+            if (bondValence != 0) return;
+        }
+
+        if (otherAtom.Connected == otherValence || thisAtom.Connected == thisValence)
         {
             Debug.Log("can not be connected");
             return;
@@ -237,7 +143,7 @@ public class Assembler : MonoBehaviour
         Vector3 otherAtomPos = collider.gameObject.transform.position;
         Vector3 thisAtomPos = transform.position;
 
-        //get the direction vector of the nearest bond
+        //get the bond length by key
         string key;
         if (otherAtom.Symbol.Length <= thisAtom.Symbol.Length && otherAtom.Symbol[0] < thisAtom.Symbol[0])
         {
@@ -246,116 +152,46 @@ public class Assembler : MonoBehaviour
         else
         {
             key = otherAtom.Symbol + otherAtom.Symbol;
-        }   
+        }
         float length = Config.BondLengthTable[key];
 
-        List<Vector4> otherAtomVbonds = otherAtom.vbonds;
-        float minDistance = float.MaxValue;
-        catomBondIndex = -1;
-        for (int i = 0;i < otherAtomVbonds.Count;i++)
-        {
-            if (otherAtomVbonds[i].w == 1)
-                continue;
-            float distance = (otherAtomPos + collider.transform.TransformDirection(new Vector3(otherAtomVbonds[i].x, otherAtomVbonds[i].y, otherAtomVbonds[i].z)) - thisAtomPos).sqrMagnitude;
-            print("index: " + i + "distance: " + distance);
-            if (distance < minDistance)
-            {
-                minDistance = distance;
-                catomBondIndex = i;
-            }
-        }
-        
-
-        print("selectedIndex: " + catomBondIndex);
-        
+        //get nearest vbond index
+        catomBondIndex = otherAtom.getVbondIdx(transform.position);
         if (catomBondIndex == -1)
             return;
 
-        //计算结束， 开始显示
-
         //提示分子当前原子可被连接
         gameObject.transform.parent.GetComponent<MoleculesAction>().SetConnectableAtom(gameObject);
-        
+
         //draw bond can be connected
         GameObject prefebBond = (GameObject)Resources.Load("_Prefebs/SingleBond") as GameObject;
         sbond = Instantiate(prefebBond);
         sbond.GetComponent<Renderer>().material = Resources.Load("_Materials/Highlight") as Material;
 
-        Vector3 direction = otherAtomVbonds[catomBondIndex];
+        //translate bond
+        Vector3 direction = otherAtom.vbonds[catomBondIndex];
         Vector3 trasformedDirection = collider.transform.TransformDirection(direction);
-        //collider.transform.TransformDirection(new Vector3(otherAtomVbonds[catomBondIndex].x, otherAtomVbonds[catomBondIndex].y, otherAtomVbonds[catomBondIndex].z));
-
-        /*sbond.transform.position = new Vector3(otherAtomVbonds[catomBondIndex].x * 0.5f + otherAtomPos.x, 
-            otherAtomVbonds[catomBondIndex].y * 0.5f + otherAtomPos.y, 
-            otherAtomVbonds[catomBondIndex].z * 0.5f + otherAtomPos.z);*/
-        Vector3 expectedPos = otherAtomPos + trasformedDirection * length;
-        /*sbond.transform.position = new Vector3(trasformedDirection.x * 0.5f + otherAtomPos.x,
-            trasformedDirection.y * 0.5f + otherAtomPos.y,
-            trasformedDirection.z * 0.5f + otherAtomPos.z);*/
+        expectedPos = otherAtomPos + trasformedDirection * length;
         sbond.transform.position = Vector3.Lerp(otherAtomPos, expectedPos, 0.5f);
 
+        //rotate bond
         Vector3 scale = prefebBond.transform.lossyScale;
         scale.y = length * 0.5f;
         sbond.transform.localScale = scale;
         sbond.transform.LookAt(otherAtomPos);
         sbond.transform.Rotate(new Vector3(90, 0, 0));
 
-        // show the correct position
-        
+        //show expected position
+        satom = Instantiate(collider.gameObject);
+        satom.GetComponent<Renderer>().material = Resources.Load("_Materials/Red") as Material;
+        satom.transform.position = expectedPos;
 
-        //记录连接的目标原子
+        //set catom
         catom = collider.gameObject;
-        /*Atom a1 = collider.gameObject.GetComponent<Atom>();
-        Atom a2 = GetComponent<Atom> ();
-        
-        if (a1.Connected == a1.Valence || a2.Connected == a2.Valence)
-        {
-            Debug.Log("can not be connected");
-            return;
-        }
-
-        // show bond cloud be connected
-        Vector3 pos1 = collider.gameObject.transform.position;
-        Vector3 pos2 = transform.position;
-
-        GameObject prefebMole = (GameObject)Resources.Load("_Prefebs/SingleBond") as GameObject;
-        GameObject bond = Instantiate(prefebMole);
-        bond.GetComponent<Renderer>().material.color = Color.yellow;
-        bond.transform.position = Vector3.Lerp(pos1, pos2, 0.5f);
-        float distance = Vector3.Distance(pos1, pos2);
-        Vector3 scale = prefebMole.transform.lossyScale;
-        scale.y = distance * 0.5f;
-        bond.transform.localScale = scale;
-
-        bond.transform.LookAt(pos2);
-        bond.transform.Rotate(new Vector3(90, 0, 0));
-
- 
-        sbonds.Add (collider.gameObject, bond);
-        catom = collider.gameObject;*/
     }
 
-    /*void DeleteSbond(GameObject gameObject)
-    {
-        //delete bonds that shown before
-        print("exit");
-        if (sbonds.ContainsKey(gameObject))
-        {
-            GameObject sbond = sbonds[gameObject];
-            sbonds.Remove(gameObject);
-            Destroy(sbond);
-        }
-
-    }*/
-
-
 	void OnTriggerExit (Collider collider) {
-
-        
-        if (collider.gameObject != catom)
-            return;
-
-        if (collider.isTrigger)
+        if (collider.gameObject != catom || collider.isTrigger)
             return;
         
         if (collider.gameObject.GetComponent<Atom>() == null)
@@ -363,18 +199,10 @@ public class Assembler : MonoBehaviour
 
         if (!grabbed)
             return;
-
-        print("exit trigger");
+        
         Destroy(sbond);
         Destroy(satom);
         gameObject.transform.parent.GetComponent<MoleculesAction>().ResetConnectable();
         sbond = null;
-        /*DeleteSbond(collider.gameObject);
-
-        if (catom == gameObject)
-        {
-            catom = null;
-        }*/
-
     }
 }

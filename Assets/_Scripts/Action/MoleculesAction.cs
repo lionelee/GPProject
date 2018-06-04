@@ -13,7 +13,6 @@ public class MoleculesAction : VRTK_InteractableObject
 
     public void SetConnectableAtom(GameObject atom)
     {
-        print("setConnectable");
         connectableAtom = atom;
     }
 
@@ -36,15 +35,12 @@ public class MoleculesAction : VRTK_InteractableObject
 
     public override void Ungrabbed(VRTK_InteractGrab previousGrabbingObject)
     {
-        print("ungrab");
         base.Ungrabbed(previousGrabbingObject);
 		/*gameObject.GetComponent<Rotator> ().enabled = false;
 		previousGrabbingObject.gameObject.GetComponent<RotateController> ().RemoveMolecule ();*/
 
         if (GameManager.MoleculeInBuildArea(gameObject))
         {
-
-            print("in build area");
             GameManager.PutIntoBuildArea(gameObject);
             foreach (Assembler assembler in gameObject.GetComponentsInChildren<Assembler>())
             {
@@ -60,7 +56,6 @@ public class MoleculesAction : VRTK_InteractableObject
         }
         else
         {
-            print("out of build area");
             GameManager.RemoveMolecule(gameObject);
         }
 
@@ -72,7 +67,6 @@ public class MoleculesAction : VRTK_InteractableObject
 
     public override void StartUsing(VRTK_InteractUse usingObject)
     {
-        print("use molecule");
         base.StartUsing(usingObject);
         List<GameObject> list = GetTouchingObjects();
         for (int i = 0; i < gameObject.transform.childCount; i++)
