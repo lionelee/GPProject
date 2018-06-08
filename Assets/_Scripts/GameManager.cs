@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using VRTK;
+using System;
 
 public enum InteracteMode
 {
@@ -35,7 +36,8 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        string path = "Molecule"; // + DateTime.Now.ToString("");
+        print(path);
     }
 
     public static bool MoleculeInBuildArea(GameObject mole)
@@ -125,7 +127,7 @@ public class GameManager : MonoBehaviour
     {
         VRTK_DeviceFinder.GetControllerRightHand().GetComponent<LinearmoveController>().RemoveMolecule();
     }
-
+    
     public static void GenerateAtom(string symbol, int valence)
     {
         GameObject newComponentPos = GameObject.FindGameObjectWithTag("NewComponentPos");
@@ -271,8 +273,15 @@ public class GameManager : MonoBehaviour
         b.A1 = atom1;
         b.A2 = atom2;
         b.Type = BondType.SINGLE;
-        atom1.GetComponent<Atom>().addBond(generatedBond);
-        atom2.GetComponent<Atom>().addBond(generatedBond);
+        Atom at1 = atom1.GetComponent<Atom>();
+        at1.addBond(generatedBond);
+        Atom at2 = atom2.GetComponent<Atom>();
+        at2.addBond(generatedBond);
+
+        // mark atom's vbond
+        Vector3 dir = atom2.transform.position - atom1.transform.position;
+        at1.markVbondMatched(dir);
+        at2.markVbondMatched(dir);
     }
     #endregion
 
@@ -315,5 +324,4 @@ public class GameManager : MonoBehaviour
 
         }
     }
-    
 }

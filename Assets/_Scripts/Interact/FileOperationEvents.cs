@@ -15,7 +15,12 @@ public class FileOperationEvents : MonoBehaviour {
     public void OnSaveButtonClick()
     {
         FileOpCanvas.SetActive(false);
-        string path = "Molecule" + DateTime.Now.ToString();
+        if (GameManager.molecules.Count == 0)
+        {
+            Debug.Log("Nothing to save");
+            return;
+        }
+        string path = "Molecule" + DateTime.Now.ToString("yyMMddHHmmssff");
         FileOperator.SaveModel(path);
     }
 }

@@ -127,7 +127,7 @@ public class Assembler : MonoBehaviour
         a1.addBond(bond);
         a2.addBond(bond);
     }
-    
+
 	public void Connect()
 	{
         if (sbond == null)
@@ -145,8 +145,6 @@ public class Assembler : MonoBehaviour
         //set sbond's parent to molecule
         sbond.transform.parent = catom.transform.parent;
 
-        //calculate expected position of this atom
-        //Vector3 expectedPos = catom.transform.position + 2 * (sbond.transform.position - catom.transform.position);
 
         // 更新目标原子的vbond,标记一个化学键为已使用,抓取原子的vbond由之后的getAngle()函数更新
         a1.setVbondUsed(catomBondIndex);
@@ -157,7 +155,7 @@ public class Assembler : MonoBehaviour
         //rotate    
         Vector3 vec1 = (sbond.transform.position - catom.transform.position).normalized;
         Vector3 vec2 = (transform.TransformDirection(a2.getAngle(selfBondIndex))).normalized;
-        
+
         float an = 180 - Vector3.Angle(vec1, vec2);
         if (vec1 == vec2)
         {
@@ -193,7 +191,7 @@ public class Assembler : MonoBehaviour
 
         print("after");
         print("child count: " + gameObject.transform.parent.transform.childCount);
-        
+
         List<GameObject> children = new List<GameObject>();
         foreach (Transform child in otherMole.transform)
         {
@@ -211,7 +209,7 @@ public class Assembler : MonoBehaviour
         }
         GameManager.RemoveMolecule(otherMole);
     }
-    
+
     private float GetBondLength(Atom a1, Atom a2)
     {
         string key;
@@ -244,7 +242,8 @@ public class Assembler : MonoBehaviour
         }*/
 
         Atom otherAtom = collider.gameObject.GetComponent<Atom>();
-        Atom thisAtom = transform.gameObject.GetComponent<Atom>();
+        Atom thisAtom = gameObject.GetComponent<Atom>();
+        
         uint otherValence = (uint)Mathf.Abs(otherAtom.Valence);
         otherValence = otherValence == 0 ? 1 : otherValence;
         uint thisValence = (uint)Mathf.Abs(thisAtom.Valence);

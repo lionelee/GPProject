@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 4764044824072552}
   - component: {fileID: 114278475253106670}
   - component: {fileID: 54860424541539292}
+  - component: {fileID: 114943824606756332}
   m_Layer: 0
   m_Name: Molecule
   m_TagString: Component
@@ -86,3 +87,15 @@ MonoBehaviour:
   useOverrideButton: 0
   allowedUseControllers: 0
   usingState: 0
+--- !u!114 &114943824606756332
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1594423098900344}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d4d5dae8be9ce24eabdc80f83853bc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotationSpeed: 180

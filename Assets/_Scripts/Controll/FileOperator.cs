@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 public class FileOperator
@@ -19,7 +20,8 @@ public class FileOperator
         StreamWriter sw = new StreamWriter(fs);
         foreach(GameObject mole in GameManager.molecules)
         {
-            sw.WriteLine("Molecule");
+            sw.WriteLine(mole.GetComponent<Molecule>().toString());
+            List<string> bonds = new List<string>(); 
             foreach (Transform child in mole.transform)
             {
                 if (child.tag != "Bond" && child.tag != "Component")
@@ -27,12 +29,18 @@ public class FileOperator
                 string s;
                 if (child.tag == "Bond")
                 {
-                    s = child.GetComponent<Bond>().toString();
+                    bonds.Add(child.GetComponent<Bond>().toString());
                 }
                 else
                 {
                     s = child.GetComponent<Atom>().toString() + child.position.ToString();
+                    sw.WriteLine(s);
                 }
+            }
+            //write bonds's info after all atoms' info have been written
+            //in order to calculate vbond easily when load model
+            foreach(string s in bonds)
+            {
                 sw.WriteLine(s);
             }
         }

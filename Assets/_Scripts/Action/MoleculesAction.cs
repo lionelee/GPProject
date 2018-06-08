@@ -35,7 +35,6 @@ public class MoleculesAction : VRTK_InteractableObject
 
     public override void Ungrabbed(VRTK_InteractGrab previousGrabbingObject)
     {
-        print("ungrab");
         GameManager.CancelLinearMovable();
         base.Ungrabbed(previousGrabbingObject);
 		/*gameObject.GetComponent<Rotator> ().enabled = false;
