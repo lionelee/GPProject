@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 public class FileOperator
@@ -20,6 +21,7 @@ public class FileOperator
         foreach(GameObject mole in GameManager.molecules)
         {
             sw.WriteLine(mole.GetComponent<Molecule>().toString());
+            List<string> bonds = new List<string>(); 
             foreach (Transform child in mole.transform)
             {
                 if (child.tag != "Bond" && child.tag != "Component")
@@ -27,12 +29,18 @@ public class FileOperator
                 string s;
                 if (child.tag == "Bond")
                 {
-                    s = child.GetComponent<Bond>().toString();
+                    bonds.Add(child.GetComponent<Bond>().toString());
                 }
                 else
                 {
-                    s = child.GetComponent<Atom>().toString() + child.position.ToString();
+                    s = child.GetComponent<Atom>().toString() + TypeConvert.Vec3ToStr(child.position);
+                    sw.WriteLine(s);
                 }
+            }
+            //write bonds's info after all atoms' info have been written
+            //in order to calculate vbond easily when load model
+            foreach(string s in bonds)
+            {
                 sw.WriteLine(s);
             }
         }
@@ -55,11 +63,6 @@ public class FileOperator
             string[] sArray = line.Split(' ');
             if(sArray[0] == "Molecule")
             {
-                if (sArray.Length != 4)
-                {
-                    Debug.Log("File Damaged.");
-                    return -1;
-                }
                 mole = gm.GenerateMolecule();
             }
             else if(sArray[0] == "Bond")
@@ -69,7 +72,7 @@ public class FileOperator
                     Debug.Log("File Damaged.");
                     return -1;
                 }
-                gm.GenBondForMole(int.Parse(sArray[1]), int.Parse(sArray[2]), int.Parse(sArray[3]), mole);
+                gm.GenBondForMole(sArray[1], int.Parse(sArray[2]), int.Parse(sArray[3]), mole);
             }
             else
             {

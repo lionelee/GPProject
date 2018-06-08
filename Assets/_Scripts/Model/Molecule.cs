@@ -6,7 +6,6 @@ public class Molecule : MonoBehaviour
 {    
     public int Id { set; get; }
     public int CurrentAtomId { set; get; }
-
     
     public Molecule(int id)
     {

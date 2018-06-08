@@ -34,6 +34,6 @@ public class RotateController : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		
-	}
+       
+    }
 }

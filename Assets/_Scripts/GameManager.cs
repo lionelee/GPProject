@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using VRTK;
+using System;
 
 public enum InteracteMode
 {
@@ -14,11 +15,8 @@ public class GameManager : MonoBehaviour
     static public Molecule curMolecule;
     static public List<GameObject> bonds;
     static public List<GameObject> molecules;
-
-    static public InteracteMode interacteMode;
-
     static public GameObject prefebMole;
-
+    static public InteracteMode interacteMode;
     static GameObject selectedComponent;
     static bool connectable;
     static int currentMoleId;
@@ -38,7 +36,8 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        string path = "Molecule"; // + DateTime.Now.ToString("");
+        
     }
 
     public static bool MoleculeInBuildArea(GameObject mole)
@@ -127,15 +126,7 @@ public class GameManager : MonoBehaviour
     {
         VRTK_DeviceFinder.GetControllerRightHand().GetComponent<LinearmoveController>().RemoveMolecule();
     }
-
-
-    /// <summary>
-    /// Generate an atom model to the ray pointer,
-    /// and new a Atom 
-    /// </summary>
-    /// <param name="symbol"></param>
-    /// <param name="valence"></param>
-
+    
     public static void GenerateAtom(string symbol, int valence)
     {
         GameObject newComponentPos = GameObject.FindGameObjectWithTag("NewComponentPos");
@@ -229,21 +220,25 @@ public class GameManager : MonoBehaviour
         //generatedAtom.transform.Translate(mole.transform.position - generatedAtom.transform.position);
     }
 
-    public void GenBondForMole(int type, int a1, int a2, GameObject mole)
+    public void GenBondForMole(string type, int a1, int a2, GameObject mole)
     {
         if (mole == null) return;
         GameObject prefebBond = null;
+        BondType btype = BondType.SINGLE;
 
         switch (type)
         {
-            case 0:
+            case "SINGLE":
                 prefebBond = (GameObject)Resources.Load("_Prefebs/SingleBond") as GameObject;
+                btype = BondType.SINGLE;
                 break;
-            case 1:
+            case "DOUBLE":
                 prefebBond = (GameObject)Resources.Load("_Prefebs/DoubleBond") as GameObject;
+                btype = BondType.DOUBLE;
                 break;
-            case 2:
+            case "TRIPPLE":
                 prefebBond = (GameObject)Resources.Load("_Prefebs/TrippleBond") as GameObject;
+                btype = BondType.TRIPLE;
                 break;
             default:
                 break;
@@ -264,8 +259,10 @@ public class GameManager : MonoBehaviour
                     atom2 = child.gameObject;
             }
         }
+        print(":::::::::::::::::::::::::::::::::::::::::::START::::::::::::::::::::::::::::::::::::::::::::::::::::::");
         if (atom1 == null || atom2 == null)
             return;
+        print("::::::::::::::::::::::::::::::::::::::::::::::END:::::::::::::::::::::::::::::::::::::::::::::::::::::::");
 
         // locate the bond
         Vector3 pos1 = atom1.transform.position, pos2 = atom2.transform.position;
@@ -280,10 +277,18 @@ public class GameManager : MonoBehaviour
         Bond b = generatedBond.AddComponent<Bond>();
         b.A1 = atom1;
         b.A2 = atom2;
-        b.Type = BondType.SINGLE;
-        atom1.GetComponent<Atom>().addBond(generatedBond);
-        atom2.GetComponent<Atom>().addBond(generatedBond);
+        b.Type = btype;
+        Atom at1 = atom1.GetComponent<Atom>();
+        at1.addBond(generatedBond);
+        Atom at2 = atom2.GetComponent<Atom>();
+        at2.addBond(generatedBond);
+
+        // mark atom's vbond
+        Vector3 dir = atom2.transform.position - atom1.transform.position;
+        at1.markVbondMatched(dir);
+        at2.markVbondMatched(dir);
     }
+    #endregion
 
     public static void SwitchMode(InteracteMode mode)
     {
@@ -324,6 +329,4 @@ public class GameManager : MonoBehaviour
 
         }
     }
-
-    #endregion
 }

@@ -92,9 +92,21 @@ public class Atom : MonoBehaviour
         vbonds[idx] = usedVbond;
     }
     
+    public void markVbondMatched(Vector3 dir)
+    {
+        for (int i = 0; i < vbonds.Count; i++)
+        {
+            Vector3 v = transform.TransformDirection(new Vector3(vbonds[i].x, vbonds[i].y, vbonds[i].z));
+            if(Vector3.Cross(v, dir) == Vector3.zero)
+            {
+                setVbondUsed(i);
+                return;
+            }
+        }
+    }
 
     public string toString()
     {
-        return Symbol + " " + Id.ToString() + " " + Valence.ToString() ;
+        return Symbol + " " + Id.ToString() + " " + Valence.ToString() + " ";
     }
 }

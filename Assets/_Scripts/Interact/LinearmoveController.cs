@@ -34,13 +34,27 @@ public class LinearmoveController : MonoBehaviour {
 	private void DoTouchpadTouchEnd(object sender, ControllerInteractionEventArgs e)
 	{
 		if(molecule != null)
-			molecule.GetComponent<Rotator> ().SetTouchAxis (Vector2.zero);
+			molecule.GetComponent<LinearMover> ().SetTouchAxis (Vector2.zero);
 	}
 
 
     // Update is called once per frame
     void Update()
     {
-
+        if (molecule != null)
+        {
+            if (Input.GetKey(KeyCode.I))
+            {
+                molecule.GetComponent<LinearMover>().SetTouchAxis(new Vector2(0, 1));
+            }
+            else if (Input.GetKey(KeyCode.K))
+            {
+                molecule.GetComponent<LinearMover>().SetTouchAxis(new Vector2(0, -1));
+            }
+            else
+            {
+                molecule.GetComponent<LinearMover>().SetTouchAxis(Vector2.zero);
+            }
+        }
     }
 }

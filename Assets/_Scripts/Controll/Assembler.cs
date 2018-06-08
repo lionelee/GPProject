@@ -10,11 +10,9 @@ public class Assembler : MonoBehaviour
 
     GameObject catom;
     int catomBondIndex;
+    Vector3 expectedPos;
     int selfBondIndex;
     //Dictionary<GameObject, GameObject> sbonds;
-
-    Vector3 expectedPos;
-
     Dictionary<GameObject, bool> ContainObject;
     bool grabbed;
 
@@ -130,7 +128,6 @@ public class Assembler : MonoBehaviour
         a2.addBond(bond);
     }
 
-
 	public void Connect()
 	{
         if (sbond == null)
@@ -180,6 +177,9 @@ public class Assembler : MonoBehaviour
         b.A2 = a2.gameObject;
         b.A1Index = catomBondIndex;
         b.A2Index = selfBondIndex;
+        print("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
+        print(sbond.GetComponent<Bond>().toString());
+        print("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
         b.Type = BondType.SINGLE;
         a1.addBond(sbond);
         a2.addBond(sbond);
@@ -226,7 +226,7 @@ public class Assembler : MonoBehaviour
         }
         return Config.BondLengthTable[key];
     }
-
+ 
 	void OnTriggerEnter(Collider collider)
 	{
         if (collider.isTrigger)
@@ -241,7 +241,7 @@ public class Assembler : MonoBehaviour
         if (collider.gameObject.transform.parent == null)
             return;
 
-        if ( sbond != null)
+        if (sbond != null)
         {
             Destroy(sbond);
             Destroy(satom);
@@ -301,7 +301,7 @@ public class Assembler : MonoBehaviour
         sbond.transform.Rotate(new Vector3(90, 0, 0));
 
         //show expected position
-        satom = Instantiate(gameObject);
+        satom = Instantiate(collider.gameObject);
         satom.GetComponent<Renderer>().material = Resources.Load("_Materials/Red") as Material;
         satom.transform.position = expectedPos;
 

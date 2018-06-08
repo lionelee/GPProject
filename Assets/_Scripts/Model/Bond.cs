@@ -4,7 +4,7 @@ using UnityEngine;
 
 public enum BondType
 {
-    SINGLE, DOUBLE, TRIPLE
+    SINGLE = 0, DOUBLE, TRIPLE
 }
 
 public class Bond : MonoBehaviour{
@@ -13,12 +13,12 @@ public class Bond : MonoBehaviour{
 
     public int A1Index { get; set; }
     public int A2Index { get; set; }
-
+    
     public BondType Type { get; set; }
 
     public string toString()
     {
-        return "Bond" + " " + Type.ToString() + " " + A1.GetComponent<Atom>().Id.ToString() + " " + A1.GetComponent<Atom>().Id.ToString();
+        return "Bond" + " " + Type.ToString() + " " + A1.GetComponent<Atom>().Id.ToString() + " " + A2.GetComponent<Atom>().Id.ToString();
     }
 }
 
