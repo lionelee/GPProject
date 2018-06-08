@@ -107,6 +107,6 @@ public class Atom : MonoBehaviour
 
     public string toString()
     {
-        return Symbol + " " + Id.ToString() + " " + Valence.ToString() ;
+        return Symbol + " " + Id.ToString() + " " + Valence.ToString() + " ";
     }
 }

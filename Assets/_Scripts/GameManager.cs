@@ -221,21 +221,25 @@ public class GameManager : MonoBehaviour
         //generatedAtom.transform.Translate(mole.transform.position - generatedAtom.transform.position);
     }
 
-    public void GenBondForMole(int type, int a1, int a2, GameObject mole)
+    public void GenBondForMole(string type, int a1, int a2, GameObject mole)
     {
         if (mole == null) return;
         GameObject prefebBond = null;
+        BondType btype = BondType.SINGLE;
 
         switch (type)
         {
-            case 0:
+            case "SINGLE":
                 prefebBond = (GameObject)Resources.Load("_Prefebs/SingleBond") as GameObject;
+                btype = BondType.SINGLE;
                 break;
-            case 1:
+            case "DOUBLE":
                 prefebBond = (GameObject)Resources.Load("_Prefebs/DoubleBond") as GameObject;
+                btype = BondType.DOUBLE;
                 break;
-            case 2:
+            case "TRIPPLE":
                 prefebBond = (GameObject)Resources.Load("_Prefebs/TrippleBond") as GameObject;
+                btype = BondType.TRIPLE;
                 break;
             default:
                 break;
@@ -256,8 +260,10 @@ public class GameManager : MonoBehaviour
                     atom2 = child.gameObject;
             }
         }
+        print(":::::::::::::::::::::::::::::::::::::::::::START::::::::::::::::::::::::::::::::::::::::::::::::::::::");
         if (atom1 == null || atom2 == null)
             return;
+        print("::::::::::::::::::::::::::::::::::::::::::::::END:::::::::::::::::::::::::::::::::::::::::::::::::::::::");
 
         // locate the bond
         Vector3 pos1 = atom1.transform.position, pos2 = atom2.transform.position;
@@ -272,7 +278,7 @@ public class GameManager : MonoBehaviour
         Bond b = generatedBond.AddComponent<Bond>();
         b.A1 = atom1;
         b.A2 = atom2;
-        b.Type = BondType.SINGLE;
+        b.Type = btype;
         Atom at1 = atom1.GetComponent<Atom>();
         at1.addBond(generatedBond);
         Atom at2 = atom2.GetComponent<Atom>();

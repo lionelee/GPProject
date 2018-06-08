@@ -33,7 +33,7 @@ public class FileOperator
                 }
                 else
                 {
-                    s = child.GetComponent<Atom>().toString() + child.position.ToString();
+                    s = child.GetComponent<Atom>().toString() + TypeConvert.Vec3ToStr(child.position);
                     sw.WriteLine(s);
                 }
             }
@@ -72,7 +72,7 @@ public class FileOperator
                     Debug.Log("File Damaged.");
                     return -1;
                 }
-                gm.GenBondForMole(int.Parse(sArray[1]), int.Parse(sArray[2]), int.Parse(sArray[3]), mole);
+                gm.GenBondForMole(sArray[1], int.Parse(sArray[2]), int.Parse(sArray[3]), mole);
             }
             else
             {

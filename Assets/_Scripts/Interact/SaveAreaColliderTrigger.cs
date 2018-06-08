@@ -1,10 +1,8 @@
-﻿using VRTK;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class SaveAreaColliderTrigger : VRTK_InteractableObject
+public class SaveAreaColliderTrigger : MonoBehaviour
 {
     public GameObject HighlightMark;
-    public GameObject FileOpCanvas;
 
     Material highlight;
     Material neon;
@@ -16,12 +14,6 @@ public class SaveAreaColliderTrigger : VRTK_InteractableObject
         neon = Resources.Load("_Materials/Neon") as Material;
     }
 
-    // Update is called once per frame
-    protected override void Update()
-    {
-
-    }
-
     private void OnTriggerEnter(Collider other)
     {
         HighlightMark.GetComponent<Renderer>().material = highlight;
@@ -30,11 +22,5 @@ public class SaveAreaColliderTrigger : VRTK_InteractableObject
     private void OnTriggerExit(Collider other)
     {
         HighlightMark.GetComponent<Renderer>().material = neon;
-    }
-
-    public override void StartUsing(VRTK_InteractUse usingObject)
-    {
-        base.StartUsing(usingObject);
-        FileOpCanvas.SetActive(true);
     }
 }

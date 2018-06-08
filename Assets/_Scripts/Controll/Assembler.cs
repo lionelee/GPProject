@@ -177,6 +177,9 @@ public class Assembler : MonoBehaviour
         b.A2 = a2.gameObject;
         b.A1Index = catomBondIndex;
         b.A2Index = selfBondIndex;
+        print("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
+        print(sbond.GetComponent<Bond>().toString());
+        print("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
         b.Type = BondType.SINGLE;
         a1.addBond(sbond);
         a2.addBond(sbond);
@@ -235,12 +238,6 @@ public class Assembler : MonoBehaviour
         if (!grabbed)
             return;
 
-        /*if (sbond != null)
-        {
-            Destroy(sbond);
-            Destroy(satom);
-        }*/
-
         Atom otherAtom = collider.gameObject.GetComponent<Atom>();
         Atom thisAtom = gameObject.GetComponent<Atom>();
         
@@ -274,17 +271,28 @@ public class Assembler : MonoBehaviour
         //提示分子当前原子可被连接
         gameObject.transform.parent.GetComponent<MoleculesAction>().SetConnectableAtom(gameObject);
 
+        //calculate atom's expected position and bond's position
+        Vector3 direction = otherAtom.vbonds[catomBondIndex];
+        Vector3 trasformedDirection = collider.transform.TransformDirection(direction);
+        expectedPos = otherAtomPos + trasformedDirection * length;
+        Vector3 bondPos = Vector3.Lerp(otherAtomPos, expectedPos, 0.5f);
+        if (sbond != null && sbond.transform.position == bondPos)
+        {
+            return;
+        }
+        else
+        {
+            Destroy(sbond);
+            Destroy(satom);
+        }
+
         //draw bond can be connected
         GameObject prefebBond = (GameObject)Resources.Load("_Prefebs/SingleBond") as GameObject;
         sbond = Instantiate(prefebBond);
         sbond.GetComponent<Renderer>().material = Resources.Load("_Materials/Highlight") as Material;
 
         //translate bond
-        Vector3 direction = otherAtom.vbonds[catomBondIndex];
-        Vector3 trasformedDirection = collider.transform.TransformDirection(direction);
-        expectedPos = otherAtomPos + trasformedDirection * length;
-        sbond.transform.position = Vector3.Lerp(otherAtomPos, expectedPos, 0.5f);
-
+        sbond.transform.position = bondPos;
         //rotate bond
         Vector3 scale = prefebBond.transform.lossyScale;
         scale.y = length * 0.5f;

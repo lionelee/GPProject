@@ -9,7 +9,7 @@ public class TypeConvert
     {
         if (s.Length <= 0)
             return Vector3.zero;
-        string[] pos = s.Trim(' ').Split(',');
+        string[] pos = s.Split(',');
         if(pos != null && pos.Length == 3)
         {
             float x = float.Parse(pos[0]);
@@ -18,5 +18,12 @@ public class TypeConvert
             return new Vector3(x, y, z);
         }
         return Vector3.zero;
+    }
+
+    public static string Vec3ToStr(Vector3 pos)
+    {
+        if (pos == null)
+            return null;
+        return pos.x.ToString() + "," + pos.y.ToString() + "," + pos.z.ToString(); 
     }
 }
