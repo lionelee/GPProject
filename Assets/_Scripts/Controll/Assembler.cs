@@ -238,11 +238,14 @@ public class Assembler : MonoBehaviour
         if (!grabbed)
             return;
 
-        /*if (sbond != null)
+        if (collider.gameObject.transform.parent == null)
+            return;
+
+        if ( sbond != null)
         {
             Destroy(sbond);
             Destroy(satom);
-        }*/
+        }
 
         Atom otherAtom = collider.gameObject.GetComponent<Atom>();
         Atom thisAtom = gameObject.GetComponent<Atom>();
@@ -298,7 +301,7 @@ public class Assembler : MonoBehaviour
         sbond.transform.Rotate(new Vector3(90, 0, 0));
 
         //show expected position
-        satom = Instantiate(collider.gameObject);
+        satom = Instantiate(gameObject);
         satom.GetComponent<Renderer>().material = Resources.Load("_Materials/Red") as Material;
         satom.transform.position = expectedPos;
 
@@ -315,7 +318,7 @@ public class Assembler : MonoBehaviour
 
         if (!grabbed)
             return;
-        
+
         Destroy(sbond);
         Destroy(satom);
         gameObject.transform.parent.GetComponent<MoleculesAction>().ResetConnectable();

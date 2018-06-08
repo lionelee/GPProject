@@ -21,6 +21,7 @@ public class BondsAction : VRTK_InteractableObject
         base.StopUsing(usingObject);
 
         GameManager.CancelComponentSelected();
+		GameManager.CancelRotatable();
         GameObject.FindGameObjectWithTag("EventManager").GetComponent<UiDisplayController>().ShowComponentOpCanvas(false, gameObject);
 
         GameManager.SwitchMode(InteracteMode.GRAB);

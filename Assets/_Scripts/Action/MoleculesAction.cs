@@ -23,7 +23,7 @@ public class MoleculesAction : VRTK_InteractableObject
     public override void Grabbed(VRTK_InteractGrab grabbingObject)
     {
         base.Grabbed(grabbingObject);
-        GameManager.SetRotatableMole(gameObject);
+		GameManager.SetLinearMovableMole(gameObject);
         foreach (Assembler assembler in gameObject.GetComponentsInChildren<Assembler>())
         {
             assembler.SetGrabbed();

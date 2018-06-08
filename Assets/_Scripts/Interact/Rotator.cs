@@ -8,6 +8,7 @@ public class Rotator : MonoBehaviour {
 	float x = 0.0f;
 	float y = 0.0f;
     Vector2 touchAxis;
+	Rigidbody rb;
         
 
     public void SetTouchAxis(Vector2 data)
@@ -16,16 +17,9 @@ public class Rotator : MonoBehaviour {
     }
     // Use this for initialization
     void Start () {
-		Vector3 angles = transform.eulerAngles;
-		x = angles.y;
-		y = angles.x;
+		rb = GetComponent<Rigidbody>();
 	}
-
-	public void ResetRotation(){
-		Vector3 angles = transform.eulerAngles;
-		x = angles.y;
-		y = angles.x;
-	}
+		
 
     private void FixedUpdate()
     {
@@ -34,10 +28,11 @@ public class Rotator : MonoBehaviour {
 
     void Rotate()
     {
-		x += touchAxis.x * rotationSpeed * Time.deltaTime;
-		y += touchAxis.y * rotationSpeed * Time.deltaTime;
+		x = touchAxis.x * rotationSpeed * Time.deltaTime;
+		y = touchAxis.y * rotationSpeed * Time.deltaTime;
+
 
 		Quaternion rotation = Quaternion.Euler (y, x, 0);
-		transform.rotation = rotation;
+		rb.MoveRotation(rb.rotation * rotation);
     }
 }

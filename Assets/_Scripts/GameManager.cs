@@ -110,7 +110,6 @@ public class GameManager : MonoBehaviour
 
     public static void SetRotatableMole(GameObject mole)
     {
-        mole.GetComponent<Rotator>().ResetRotation();
         VRTK_DeviceFinder.GetControllerLeftHand().GetComponent<RotateController>().SetMolecule(mole);
     }
 
