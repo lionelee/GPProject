@@ -18,7 +18,8 @@ public class Bond : MonoBehaviour{
 
     public string toString()
     {
-        return "Bond" + " " + Type.ToString() + " " + A1.GetComponent<Atom>().Id.ToString() + " " + A2.GetComponent<Atom>().Id.ToString();
+        return "Bond" + " " + Type.ToString() + " " + A1.GetComponent<Atom>().Id.ToString() + " " 
+            + A1Index.ToString()+ " " + A2.GetComponent<Atom>().Id.ToString() + " " + A2Index.ToString();
     }
 }
 

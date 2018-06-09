@@ -7,6 +7,9 @@ public class Assembler : MonoBehaviour
 {
     GameObject sbond;
     GameObject satom;
+    Material AtomHalo;
+    Material BondHalo;
+    Material DefaultMat;
 
     GameObject catom;
     int catomBondIndex;
@@ -22,7 +25,11 @@ public class Assembler : MonoBehaviour
         ContainObject = new Dictionary<GameObject, bool>();
         catom = null;
         catomBondIndex = -1;
-	}
+
+        AtomHalo = Resources.Load("_Materials/AtomHalo") as Material;
+        BondHalo = Resources.Load("_Materials/BondHalo") as Material;
+        DefaultMat = Resources.Load("_Materials/Default") as Material;
+    }
 
     public void SetGrabbed()
     {
@@ -54,7 +61,8 @@ public class Assembler : MonoBehaviour
                 return;
             else
                 ConnectAsRing(gameObject, otherAtom);
-        } else
+        }
+        else
         {
             ConnectAsChain(gameObject, otherAtom);
         }
@@ -76,10 +84,9 @@ public class Assembler : MonoBehaviour
         Vector3 a2Dir = a2.getAngle(a2Index);
 
         float length = GetBondLength(a1, a2);
-
-        GameObject prefebBond = (GameObject)Resources.Load("_Prefebs/SingleBond") as GameObject;
-        GameObject bond = Instantiate(prefebBond);
-        bond.GetComponent<Renderer>().material = Resources.Load("_Materials/Default") as Material;
+        
+        GameObject bond = Instantiate(GameManager.prefebSingleBond);
+        bond.GetComponent<Renderer>().material = DefaultMat;
 
         Vector3 transformedDirection = atom1.transform.TransformDirection(new Vector3(a1Dir.x, a1Dir.y, a1Dir.z));
 
@@ -87,7 +94,7 @@ public class Assembler : MonoBehaviour
         bond.transform.parent = atom1.transform.parent;
 
         //bond
-        Vector3 scale = prefebBond.transform.lossyScale;
+        Vector3 scale = bond.transform.lossyScale;
         scale.y = length * 0.5f;
         bond.transform.localScale = scale;
         bond.transform.LookAt(atom1.transform.position);
@@ -133,12 +140,10 @@ public class Assembler : MonoBehaviour
         if (sbond == null)
             return;
 
-        sbond.GetComponent<Renderer>().material = Resources.Load("_Materials/Default") as Material;
+        sbond.GetComponent<Renderer>().material = DefaultMat;
         Destroy(satom);
         
         // get molecules and atoms
-        Molecule m1 = catom.GetComponentInParent<Molecule>();
-        Molecule m2 = GetComponentInParent<Molecule>();
         Atom a1 = catom.GetComponent<Atom>();
         Atom a2 = GetComponent<Atom>();
 
@@ -177,9 +182,7 @@ public class Assembler : MonoBehaviour
         b.A2 = a2.gameObject;
         b.A1Index = catomBondIndex;
         b.A2Index = selfBondIndex;
-        print("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
         print(sbond.GetComponent<Bond>().toString());
-        print("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
         b.Type = BondType.SINGLE;
         a1.addBond(sbond);
         a2.addBond(sbond);
@@ -229,7 +232,7 @@ public class Assembler : MonoBehaviour
 
 	void OnTriggerEnter(Collider collider)
 	{
-        if (collider.isTrigger)
+        if (collider.isTrigger || collider.transform.parent == null)
             return;
 
         if (collider.gameObject.GetComponent<Atom>() == null)
@@ -237,6 +240,12 @@ public class Assembler : MonoBehaviour
 
         if (!grabbed)
             return;
+
+        if(sbond != null)
+        {
+            Destroy(sbond);
+            Destroy(satom);
+        }
 
         Atom otherAtom = collider.gameObject.GetComponent<Atom>();
         Atom thisAtom = gameObject.GetComponent<Atom>();
@@ -254,6 +263,7 @@ public class Assembler : MonoBehaviour
 
         if (otherAtom.Connected == otherValence || thisAtom.Connected == thisValence)
         {
+            print(otherValence);
             Debug.Log("can not be connected");
             return;
         }
@@ -275,34 +285,23 @@ public class Assembler : MonoBehaviour
         Vector3 direction = otherAtom.vbonds[catomBondIndex];
         Vector3 trasformedDirection = collider.transform.TransformDirection(direction);
         expectedPos = otherAtomPos + trasformedDirection * length;
-        Vector3 bondPos = Vector3.Lerp(otherAtomPos, expectedPos, 0.5f);
-        if (sbond != null && sbond.transform.position == bondPos)
-        {
-            return;
-        }
-        else
-        {
-            Destroy(sbond);
-            Destroy(satom);
-        }
 
         //draw bond can be connected
-        GameObject prefebBond = (GameObject)Resources.Load("_Prefebs/SingleBond") as GameObject;
-        sbond = Instantiate(prefebBond);
-        sbond.GetComponent<Renderer>().material = Resources.Load("_Materials/Highlight") as Material;
+        sbond = Instantiate(GameManager.prefebSingleBond);
+        sbond.GetComponent<Renderer>().material = BondHalo;
 
         //translate bond
-        sbond.transform.position = bondPos;
+        sbond.transform.position = Vector3.Lerp(otherAtomPos, expectedPos, 0.5f);
         //rotate bond
-        Vector3 scale = prefebBond.transform.lossyScale;
+        Vector3 scale = sbond.transform.lossyScale;
         scale.y = length * 0.5f;
         sbond.transform.localScale = scale;
         sbond.transform.LookAt(otherAtomPos);
         sbond.transform.Rotate(new Vector3(90, 0, 0));
 
         //show expected position
-        satom = Instantiate(collider.gameObject);
-        satom.GetComponent<Renderer>().material = Resources.Load("_Materials/Red") as Material;
+        satom = Instantiate(gameObject);
+        satom.GetComponent<Renderer>().material = AtomHalo;
         satom.transform.position = expectedPos;
 
         //set catom

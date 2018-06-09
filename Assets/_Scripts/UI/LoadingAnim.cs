@@ -24,7 +24,6 @@ public class LoadingAnim : MonoBehaviour {
  
    IEnumerator LoadingAnimPlay(float fps)
     {
-        int i = 0;
         while (true)
         {
             img.overrideSprite = sprites[0];

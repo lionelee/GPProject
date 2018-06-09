@@ -73,7 +73,10 @@ public class Atom : MonoBehaviour
         for (int i = 0; i < vbonds.Count; i++)
         {
             if (vbonds[i].w == 1)
+            {
+                print(vbonds[i].ToString());
                 continue;
+            }
             Vector3 dir = transform.TransformDirection(new Vector3(vbonds[i].x, vbonds[i].y, vbonds[i].z));
             float distance = (transform.position + dir - pos).sqrMagnitude;
             if (distance < minDistance)
@@ -90,19 +93,6 @@ public class Atom : MonoBehaviour
         Vector4 usedVbond = vbonds[idx];
         usedVbond.w = 1;
         vbonds[idx] = usedVbond;
-    }
-    
-    public void markVbondMatched(Vector3 dir)
-    {
-        for (int i = 0; i < vbonds.Count; i++)
-        {
-            Vector3 v = transform.TransformDirection(new Vector3(vbonds[i].x, vbonds[i].y, vbonds[i].z));
-            if(Vector3.Cross(v, dir) == Vector3.zero)
-            {
-                setVbondUsed(i);
-                return;
-            }
-        }
     }
 
     public string toString()

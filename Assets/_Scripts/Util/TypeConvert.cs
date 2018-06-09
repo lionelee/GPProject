@@ -22,8 +22,6 @@ public class TypeConvert
 
     public static string Vec3ToStr(Vector3 pos)
     {
-        if (pos == null)
-            return null;
         return pos.x.ToString() + "," + pos.y.ToString() + "," + pos.z.ToString(); 
     }
 }
