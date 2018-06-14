@@ -30,6 +30,14 @@ public class Config{
         BondAngleTable.Add("H", new List<Vector4> { new Vector4(1f,0f,0f,0)});
         BondAngleTable.Add("O", new List<Vector4> { new Vector4(1f,0f,0f,0), new Vector4(-0.259f,0f,0.966f,0)});
 
+        //last two element should be determined by ring angle dynamiclly
+        BondAngleTable.Add("-C-", new List<Vector4> { new Vector4(0f, 0.541f, -0.841f, 0), new Vector4(0f, 0.541f, 0.841f, 0), new Vector4(0f,0f,0f,1), new Vector4(0f, 0f, 0f, 1) });
+        BondAngleTable.Add("-C=", new List<Vector4> { new Vector4(0f, 1f, 0f, 0), new Vector4(0f, 0f, 0f, 1), new Vector4(0f, 0f, 0f, 1) });
+        BondAngleTable.Add("=C=", new List<Vector4> { new Vector4(0f, 0f, 0f, 1), new Vector4(0f, 0f, 0f, 1) });
+        
+        BondAngleTable.Add("C=", new List<Vector4> { new Vector4(1f, 0f, 0f, 0), new Vector4(-0.5f, 0.866f, 0f, 0), new Vector4(-0.5f, -0.866f, 0f, 0) });
+        BondAngleTable.Add("C#", new List<Vector4> { new Vector4(1f, 0f, 0f, 0), new Vector4(-1f, 0f, 0f, 0) });
+
         // initialize bond length table
 		BondLengthTable.Add("CC", 0.756f);
 		BondLengthTable.Add("CH", 0.548f);

@@ -38,7 +38,7 @@ public class FileOperator
                 }
             }
             //write bonds's info after all atoms' info have been written
-            //in order to calculate vbond easily when load model
+            //in case atom doesn't exist when loading model
             foreach(string s in bonds)
             {
                 sw.WriteLine(s);
@@ -67,12 +67,12 @@ public class FileOperator
             }
             else if(sArray[0] == "Bond")
             {
-                if (sArray.Length != 4)
+                if (sArray.Length != 6)
                 {
                     Debug.Log("File Damaged.");
                     return -1;
                 }
-                gm.GenBondForMole(sArray[1], int.Parse(sArray[2]), int.Parse(sArray[3]), mole);
+                gm.GenBondForMole(sArray, mole);
             }
             else
             {
