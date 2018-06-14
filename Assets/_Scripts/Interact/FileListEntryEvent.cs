@@ -8,5 +8,4 @@ public class FileListEntryEvent : MonoBehaviour {
         GameObject.FindGameObjectWithTag("EventManager").GetComponent<FileOperationEvents>().FileOpCanvas.SetActive(false);
         FileOperator.ReadModel(text.text);
     }
-
 }

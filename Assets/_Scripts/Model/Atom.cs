@@ -12,6 +12,7 @@ public class Atom : MonoBehaviour
     public string Symbol { set; get; }
     public int Valence { set; get; }
 	public int Connected { set; get; }
+    public bool InRing { set; get; }
     public List<Vector4> vbonds;
 	public List<GameObject> Bonds;
 
@@ -20,6 +21,7 @@ public class Atom : MonoBehaviour
     public Atom()
     {
         Connected = 0;
+        InRing = false;
         Bonds = new List<GameObject>();
     }
 	
@@ -63,6 +65,16 @@ public class Atom : MonoBehaviour
             }
         }
         return Vector3.zero;
+    }
+
+    public GameObject getBond(GameObject adjacent)
+    {
+        foreach(GameObject b in Bonds)
+        {
+            if(b.GetComponent<Bond>().getAdjacent(gameObject) == adjacent)
+                return b;
+        }
+        return null;
     }
 
     public int getVbondIdx(Vector3 pos)

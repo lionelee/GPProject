@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -41,15 +42,29 @@ public class Assembler : MonoBehaviour
         grabbed = false;
     }
 
+    #region ///connect two atoms via selection/// 
+
     public void SelectionConnect(GameObject otherAtom)
     {
         //先判断两个原子是否都有多余键
         Atom a1 = otherAtom.GetComponent<Atom>();
         Atom a2 = gameObject.GetComponent<Atom>();
+        uint otherValence = (uint)Mathf.Abs(a1.Valence);
+        otherValence = otherValence == 0 ? 1 : otherValence;
+        uint thisValence = (uint)Mathf.Abs(a2.Valence);
+        thisValence = thisValence == 0 ? 1 : thisValence;
+
         if (a1.Connected == a1.Valence || a2.Connected == a2.Valence)
         {
             Debug.Log("can not be connected");
             return;
+        }
+
+        //判断是否可连键
+        if (a1.Symbol != a2.Symbol)
+        {
+            int bondValence = a1.Valence / (int)otherValence + a2.Valence / (int)thisValence;
+            if (bondValence != 0) return;
         }
 
         GameObject selfMole = transform.parent.gameObject;
@@ -68,10 +83,108 @@ public class Assembler : MonoBehaviour
         }
     }
 
+    private List<GameObject> DFSPath(GameObject atom1, GameObject atom2)
+    {
+        List<GameObject> path = new List<GameObject>();
+        Stack<GameObject> st = new Stack<GameObject>();
+        Atom a1 = atom1.GetComponent<Atom>();
+        Atom a2 = atom2.GetComponent<Atom>();
+        st.Push(atom1);
+
+        int atomN = atom1.transform.parent.GetComponent<Molecule>().AtomNum;
+        bool[] visited = new bool[atomN];
+        GameObject[] parent = new GameObject[atomN]; 
+        for (int i = 0; i < atomN; ++i)
+            visited[i] = false;
+        for (int i = 0; i < atomN; ++i)
+            parent[i] = null;
+
+        int aid = a1.Id;
+        bool found = false;
+        while (st.Count != 0)
+        {
+            GameObject par = st.Pop();
+            foreach(GameObject bond in par.GetComponent<Atom>().Bonds)
+            {
+                if (bond != null)
+                {
+                    Bond b = bond.GetComponent<Bond>();
+                    GameObject adj = b.getAdjacent(par);
+                    aid = adj.GetComponent<Atom>().Id;
+                    parent[aid] = par;
+                    if (aid == a2.Id)
+                    {
+                        found = true;
+                        goto end;
+                    }
+                    if (!visited[aid])
+                    {
+                        visited[aid] = true;
+                        st.Push(adj);
+                    }
+                }
+            }
+        }
+        end:
+        if (found)
+        {
+            path.Add(atom1);
+            while (parent[aid] != null)
+            {
+                path.Add(parent[aid]);
+                aid = parent[aid].GetComponent<Atom>().Id;
+            }
+        }
+        return path;
+    }
 
     private void ConnectAsRing(GameObject atom1, GameObject atom2)
     {
         //分单路径成环和多路径成环
+        List<GameObject> path = DFSPath(atom1, atom2);
+        int num = path.Count;
+        if (num == 0) return;
+        double angle = Math.PI * (0.5 - 1 / num);
+
+        List<GameObject> subMole = new List<GameObject>();
+        List<GameObject> bonds = new List<GameObject>();
+        for (int i = 0; i < path.Count - 1; ++i)
+        {
+            GameObject bond = path[i].GetComponent<Atom>().getBond(path[i + 1]);
+            bonds.Add(bond);
+
+            //break bond between atoms in the ring
+            List<GameObject> objectToDetach = new List<GameObject>();
+            GameObject startAtom = path[i];
+            GameObject oppositeAtom = path[i+1];
+            List<GameObject> ignoreComponent = new List<GameObject>();
+            ignoreComponent.Add(bond);
+
+            //DFS
+            StructureUtil.DfsMolecule(startAtom, ignoreComponent, objectToDetach);
+
+            //只有在断开键后两边不属于同一个分子时，才生成新分子，否则只用删除bond即可
+            if (!objectToDetach.Contains(bond.GetComponent<Bond>().A1))
+            {
+                //merge to new molecule
+                GameObject mole = GameManager.NewMolecule();
+                mole.transform.position = startAtom.transform.position;
+                foreach (GameObject component in objectToDetach)
+                {
+                    component.transform.parent = mole.transform;
+                }
+                subMole.Add(mole);
+            }
+
+            //Destroy bond
+            startAtom.GetComponent<Atom>().removeBond(gameObject);
+            oppositeAtom.GetComponent<Atom>().removeBond(gameObject);
+            bond.SetActive(false);
+        }
+
+        // recalculate bond angle 
+
+        
     }
 
 
@@ -135,7 +248,9 @@ public class Assembler : MonoBehaviour
         a2.addBond(bond);
     }
 
-	public void Connect()
+    #endregion
+
+    public void Connect()
 	{
         if (sbond == null)
             return;
@@ -211,6 +326,7 @@ public class Assembler : MonoBehaviour
             if (child.tag != "Bond")
             {
                 child.GetComponent<Atom>().Id = mole.CurrentAtomId++;
+                mole.AtomNum++;
             }
         }
         GameManager.RemoveMolecule(otherMole);
@@ -255,17 +371,17 @@ public class Assembler : MonoBehaviour
         uint thisValence = (uint)Mathf.Abs(thisAtom.Valence);
         thisValence = thisValence == 0 ? 1 : thisValence;
 
-        if (otherAtom.Symbol != thisAtom.Symbol)
-        {
-            int bondValence = otherAtom.Valence / (int)otherValence + thisAtom.Valence / (int)thisValence;
-            if (bondValence != 0) return;
-        }
-
         if (otherAtom.Connected == otherValence || thisAtom.Connected == thisValence)
         {
             print(otherValence);
             Debug.Log("can not be connected");
             return;
+        }
+
+        if (otherAtom.Symbol != thisAtom.Symbol)
+        {
+            int bondValence = otherAtom.Valence / (int)otherValence + thisAtom.Valence / (int)thisValence;
+            if (bondValence != 0) return;
         }
 
         Vector3 otherAtomPos = collider.gameObject.transform.position;

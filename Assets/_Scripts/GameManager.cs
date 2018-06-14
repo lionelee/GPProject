@@ -124,6 +124,8 @@ public class GameManager : MonoBehaviour
         molecules.Add(mole);
         Molecule molecule = mole.AddComponent<Molecule>();
         molecule.Id = currentMoleId++;
+        molecule.CurrentAtomId = 0;
+        molecule.AtomNum = 1;
 
         return mole;
     }
@@ -188,13 +190,15 @@ public class GameManager : MonoBehaviour
 
     #region /* methods for importing model from file */
 
-    public GameObject GenerateMolecule()
+    public GameObject GenerateMolecule(int num)
     {
         GameObject mole = Instantiate(prefebMole);
         molecules.Add(mole);
         mole.transform.SetParent(buildArea.transform, true);
         Molecule molecule = mole.AddComponent<Molecule>();
         molecule.Id = currentMoleId++;
+        molecule.CurrentAtomId = 0;
+        molecule.AtomNum = num;
         return mole;
     }
 
@@ -226,6 +230,7 @@ public class GameManager : MonoBehaviour
         atom.vbonds = new List<Vector4>(Config.BondAngleTable[symbol]);
 
         generatedAtom.transform.parent = mole.transform;
+        mole.GetComponent<Molecule>().CurrentAtomId++;
         //generatedAtom.transform.Translate(mole.transform.position - generatedAtom.transform.position);
     }
 

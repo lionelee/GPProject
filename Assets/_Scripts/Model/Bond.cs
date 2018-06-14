@@ -15,6 +15,16 @@ public class Bond : MonoBehaviour{
     public int A2Index { get; set; }
     
     public BondType Type { get; set; }
+    public bool InRing { get; set; }
+
+    public GameObject getAdjacent(GameObject from)
+    {
+        if (A1== from)
+            return A2;
+        if (A2 == from)
+            return A1;
+        return null;
+    }
 
     public string toString()
     {

@@ -63,7 +63,7 @@ public class FileOperator
             string[] sArray = line.Split(' ');
             if(sArray[0] == "Molecule")
             {
-                mole = gm.GenerateMolecule();
+                mole = gm.GenerateMolecule(int.Parse(sArray[1]));
             }
             else if(sArray[0] == "Bond")
             {
