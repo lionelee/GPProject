@@ -123,6 +123,8 @@ public class GameManager : MonoBehaviour
         molecules.Add(mole);
         Molecule molecule = mole.AddComponent<Molecule>();
         molecule.Id = currentMoleId++;
+        molecule.CurrentAtomId = 0;
+        molecule.AtomNum = 1;
 
         return mole;
     }
@@ -187,13 +189,15 @@ public class GameManager : MonoBehaviour
 
     #region /* methods for importing model from file */
 
-    public GameObject GenerateMolecule()
+    public GameObject GenerateMolecule(int num)
     {
         GameObject mole = Instantiate(prefebMole);
         molecules.Add(mole);
         mole.transform.SetParent(buildArea.transform, true);
         Molecule molecule = mole.AddComponent<Molecule>();
         molecule.Id = currentMoleId++;
+        molecule.CurrentAtomId = 0;
+        molecule.AtomNum = num;
         return mole;
     }
 
@@ -225,6 +229,7 @@ public class GameManager : MonoBehaviour
         atom.vbonds = new List<Vector4>(Config.BondAngleTable[symbol]);
 
         generatedAtom.transform.parent = mole.transform;
+        mole.GetComponent<Molecule>().CurrentAtomId++;
         //generatedAtom.transform.Translate(mole.transform.position - generatedAtom.transform.position);
     }
 
@@ -335,5 +340,52 @@ public class GameManager : MonoBehaviour
             }
 
         }
+    }
+
+    public static void ChangeBondType(GameObject oldBond, BondType type)
+    {
+        Bond bondInfo = oldBond.GetComponent<Bond>();
+        GameObject Atom1 = bondInfo.A1,
+            Atom2 = bondInfo.A2;
+        Atom Atom1Info = bondInfo.A1.GetComponent<Atom>(),
+            Atom2Info = bondInfo.A2.GetComponent<Atom>();
+        switch (type)
+        {
+            case BondType.SINGLE:
+                if (bondInfo.Type == BondType.SINGLE)
+                    return;
+
+                break;
+            case BondType.DOUBLE:
+                if (bondInfo.Type == BondType.DOUBLE)
+                    return;
+                //upgrade, check free bond
+                else if (bondInfo.Type == BondType.SINGLE)
+                {
+
+                    if (Mathf.Abs(Atom1Info.Valence) - Atom1Info.Connected < 2 ||
+                        Mathf.Abs(Atom2Info.Valence) - Atom2Info.Connected < 2)
+                    {
+                        return;
+                    }
+                }
+                //degrade
+                else if (bondInfo.Type == BondType.TRIPLE)
+                {
+
+                }
+                break;
+            case BondType.TRIPLE:
+                if (bondInfo.Type == BondType.TRIPLE)
+                    return;
+
+                if (Mathf.Abs(Atom1Info.Valence) - Atom1Info.Connected < 3 ||
+                    Mathf.Abs(Atom2Info.Valence) - Atom2Info.Connected < 3)
+                {
+                    return;
+                }
+                break;
+        }
+        
     }
 }

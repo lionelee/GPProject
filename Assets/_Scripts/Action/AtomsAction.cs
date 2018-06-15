@@ -10,7 +10,7 @@ public class AtomsAction : VRTK_InteractableObject
 {
     public override void StartUsing(VRTK_InteractUse usingObject)
     {
-        print("start use atom");
+        print("atom Id: " + gameObject.GetComponent<Atom>().Id);
         base.StartUsing(usingObject);
         if (GameManager.IsConnectable())
         {

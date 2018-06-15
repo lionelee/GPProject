@@ -107,28 +107,22 @@ public class ButtonEvents : MonoBehaviour {
 
     public void OnBindTypeClick(string type)
     {
+        Bond selectedBond = GameManager.GetSelectedComponent().GetComponent<Bond>();
+        GameObject oldBond = GameManager.GetSelectedComponent();
+        BondType bondType;
         if(type == "single")
         {
-            if (GameManager.GetSelectedComponent().GetComponent<Bond>().Type == BondType.SINGLE)
-                return;
-
-        }
-        else if(type == "double")
+            bondType = BondType.SINGLE;
+        } else if(type == "double")
         {
-            if (GameManager.GetSelectedComponent().GetComponent<Bond>().Type == BondType.DOUBLE)
-                return;
-
-        } else if(type == "triple")
-        {
-            if (GameManager.GetSelectedComponent().GetComponent<Bond>().Type == BondType.TRIPLE)
-                return;
-
+            bondType = BondType.DOUBLE;
         }
         else
         {
-
+            bondType = BondType.TRIPLE;
         }
-        
+
+        GameManager.ChangeBondType(oldBond, bondType);
     }
 
 }

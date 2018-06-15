@@ -12,6 +12,7 @@ public class Atom : MonoBehaviour
     public string Symbol { set; get; }
     public int Valence { set; get; }
 	public int Connected { set; get; }
+    public bool InRing { set; get; }
     public List<Vector4> vbonds;
 	public List<GameObject> Bonds;
 
@@ -20,13 +21,27 @@ public class Atom : MonoBehaviour
     public Atom()
     {
         Connected = 0;
+        InRing = false;
         Bonds = new List<GameObject>();
     }
 	
 	public void addBond(GameObject b)
 	{
         Bonds.Add (b);
-		Connected ++;
+        BondType type = b.GetComponent<Bond>().Type;
+        switch (type)
+        {
+            case BondType.SINGLE:
+                Connected++;
+                break;
+            case BondType.DOUBLE:
+                Connected += 2;
+                break;
+            case BondType.TRIPLE:
+                Connected += 3;
+                break;
+        }
+        
 	}
 	
     public void removeBond(GameObject bond)
@@ -45,7 +60,19 @@ public class Atom : MonoBehaviour
         Vector4 v = vbonds[vbondsIndex];
         v.w = 0;
         vbonds[vbondsIndex] = v;
-        Connected--;
+        BondType type = bond.GetComponent<Bond>().Type;
+        switch (type)
+        {
+            case BondType.SINGLE:
+                Connected--;
+                break;
+            case BondType.DOUBLE:
+                Connected -= 2;
+                break;
+            case BondType.TRIPLE:
+                Connected -= 3;
+                break;
+        }
     }
 
 	public Vector3 getAngle(int returnIndex)
@@ -63,6 +90,26 @@ public class Atom : MonoBehaviour
             }
         }
         return Vector3.zero;
+    }
+
+    public Vector3 getVbondByIndex(int index)
+    {
+        if (vbonds[index].w == 1)
+            return Vector3.zero;
+        Vector4 v = vbonds[index];
+        v.w = 1;
+        vbonds[index] = v;
+        return new Vector3(v.x, v.y, v.z);
+    }
+
+    public GameObject getBond(GameObject adjacent)
+    {
+        foreach(GameObject b in Bonds)
+        {
+            if(b.GetComponent<Bond>().getAdjacent(gameObject) == adjacent)
+                return b;
+        }
+        return null;
     }
 
     public int getVbondIdx(Vector3 pos)
@@ -93,6 +140,11 @@ public class Atom : MonoBehaviour
         Vector4 usedVbond = vbonds[idx];
         usedVbond.w = 1;
         vbonds[idx] = usedVbond;
+    }
+
+    public int getVbondCount()
+    {
+        return vbonds.Count;
     }
 
     public string toString()
