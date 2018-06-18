@@ -42,6 +42,45 @@ public class Assembler : MonoBehaviour
         grabbed = false;
     }
 
+    public void BreakRingToChain(GameObject startAtom, GameObject endAtom)
+    {
+        List<GameObject> path = DFSPath(startAtom, endAtom);
+        //first Atom
+        /*GameObject curAtom = path[0];
+        GameObject nextBond = path[0].GetComponent<Atom>().getBond(path[1]);
+
+        BondType nextBondType = nextBond.GetComponent<Bond>().Type;
+        nextBond.GetComponent<BondsAction>().TmpBreak();*/
+
+        //set all atoms and bonds OUT OF ring
+        //first set all relative bonds out of ring
+        /*for (int i = 0; i < path.Count - 1; ++i)
+        {
+            path[i].GetComponent<Atom>().getBond(path[i + 1]).GetComponent<Bond>().InRing = false;
+        }*/
+
+        for(int i = 0;i < path.Count; i++)
+        {
+            path[i].GetComponent<AtomsAction>().Rebuild();
+        }
+
+
+        //set atom out of ring, binds has been set in Rebuild()
+        for (int i = 0; i < path.Count; i++)
+        {
+            path[i].GetComponent<Atom>().InRing = false;
+            foreach(GameObject bond in path[i].GetComponent<Atom>().Bonds)
+            {
+                Bond bondInfo = bond.GetComponent<Bond>();
+                if (bondInfo.InRing)
+                {
+                    path[i].GetComponent<Atom>().InRing = true;
+                    break;
+                }
+            }
+        }
+    }
+
     #region ///connect two atoms via selection/// 
 
     public void SelectionConnect(GameObject otherAtom)
@@ -146,6 +185,7 @@ public class Assembler : MonoBehaviour
         return path;
     }
 
+    #region ConnectAsRing
     private void ConnectAsRing(GameObject atom1, GameObject atom2)
     {
         //分单路径成环和多路径成环
@@ -160,7 +200,7 @@ public class Assembler : MonoBehaviour
         GameObject anchorBond = path[0].GetComponent<Atom>().getBond(path[1]);
 
         BondType anchorBondType = anchorBond.GetComponent<Bond>().Type;
-        anchorBond.GetComponent<BondsAction>().TmpBreakWithOppositeAtom(anchorAtom);
+        anchorBond.GetComponent<BondsAction>().TmpBreak();
 
         
         SetRingAnchor(anchorAtom, angle);
@@ -169,7 +209,6 @@ public class Assembler : MonoBehaviour
         Vector3 anchorY = anchorAtom.transform.TransformDirection(new Vector3(0, 1, 0));
         Vector3 LookAtPoint;
 
-        print("wanted anchorZ: " + anchorZ);
         GameObject prevAnchor = anchorAtom;
         BondType prevBondType = anchorBondType;
         int i, prevIndex, curIndex;
@@ -179,18 +218,16 @@ public class Assembler : MonoBehaviour
             anchorAtom = path[i];
             anchorBond = path[i].GetComponent<Atom>().getBond(path[i+1]);
             anchorBondType = anchorBond.GetComponent<Bond>().Type;
-            anchorBond.GetComponent<BondsAction>().TmpBreakWithOppositeAtom(anchorAtom);
+            anchorBond.GetComponent<BondsAction>().TmpBreak();
 
             anchorAtom.transform.forward = anchorZ;
-            //Vector3 anchorZ = anchorAtom.transform.TransformPoint(0, 0, 1);
             LookAtPoint = anchorAtom.transform.TransformPoint(0, 0, 1);
 
             SetRingAnchor(anchorAtom, angle);
 
-
-
-            anchorY = Quaternion.AngleAxis(2 * angle * Mathf.Rad2Deg, anchorAtom.transform.forward) * anchorY;
+            anchorY = Quaternion.AngleAxis(360.0f/num, anchorAtom.transform.forward) * anchorY;
             anchorAtom.transform.LookAt(LookAtPoint, anchorY);
+
 
             //connect to prev
             prevIndex = prevAnchor.GetComponent<Atom>().vbonds.Count - 1;
@@ -205,12 +242,9 @@ public class Assembler : MonoBehaviour
         //last one, no need to break
         anchorAtom = path[i];
 
-
         anchorAtom.transform.forward = anchorZ;
         LookAtPoint = anchorAtom.transform.TransformPoint(0, 0, 1);
-        SetRingAnchor(anchorAtom, angle);
-        
-        //anchorZ = anchorAtom.transform.TransformPoint(0, 0, 1);
+        SetRingAnchor(anchorAtom, angle);   
 
         anchorY = Quaternion.AngleAxis(2 * angle * Mathf.Rad2Deg, anchorAtom.transform.forward) * anchorY;
         anchorAtom.transform.LookAt(LookAtPoint, anchorY);
@@ -221,8 +255,7 @@ public class Assembler : MonoBehaviour
         AccurateConnect(prevAnchor, prevIndex, anchorAtom, curIndex, prevBondType);
 
         //connect to first, connect without change position, just add bond
-
-        #region Another Connect Function
+        #region Yet Another Connect Function
 
         Atom lastAtomInfo = anchorAtom.GetComponent<Atom>();
         Atom firstAtomInfo = path[0].GetComponent<Atom>();
@@ -313,7 +346,11 @@ public class Assembler : MonoBehaviour
         }
     }
 
-    //调整键角
+    /// <summary>
+    /// 用于在连环时调整原子的键角
+    /// </summary>
+    /// <param name="anchorAtom"> 当前调整的环上原子 </param>
+    /// <param name="angle"> 环的内角度数/2 </param>
     private void SetRingAnchor(GameObject anchorAtom, float angle)
     {
         Atom atomInfo = anchorAtom.GetComponent<Atom>();
@@ -339,7 +376,8 @@ public class Assembler : MonoBehaviour
 
             BondType type = bondInfo.Type;
             int oppositeVbondIdx = (bondInfo.A1 == anchorAtom) ? bondInfo.A2Index : bondInfo.A1Index;
-            GameObject oppositeAtom = atomInfo.Bonds[i].GetComponent<BondsAction>().TmpBreakWithOppositeAtom(anchorAtom);
+            GameObject oppositeAtom = bondInfo.getAdjacent(anchorAtom);
+            atomInfo.Bonds[i].GetComponent<BondsAction>().TmpBreak();
             oppositeAtomWithBondType.Add(oppositeAtom, type);
             oppositeAtomWithVbondIdx.Add(oppositeAtom, oppositeVbondIdx);
         }
@@ -358,10 +396,6 @@ public class Assembler : MonoBehaviour
                     atomInfo.vbonds = new List<Vector4>(Config.BondAngleTable["-C-"]);
                     atomInfo.vbonds[2] = new Vector4(Mathf.Sin(angle), -Mathf.Cos(angle), 0, 0);
                     atomInfo.vbonds[3] = new Vector4(-Mathf.Sin(angle), -Mathf.Cos(angle), 0, 0);
-                    print("vbonds[0]" + atomInfo.vbonds[0]);
-                    print("vbonds[1]" + atomInfo.vbonds[1]);
-                    print("vbonds[2]" + atomInfo.vbonds[2]);
-                    print("vbonds[3]" + atomInfo.vbonds[3]);
                 }
                 break;
             case 3:
@@ -388,12 +422,13 @@ public class Assembler : MonoBehaviour
         }
 
     }
+    #endregion
 
-    private void AccurateConnect(GameObject atom1, int a1Index, GameObject atom2, int a2Index, BondType bondType, bool onRing = true)
+    public void AccurateConnect(GameObject atom1, int a1Index, GameObject atom2, int a2Index, BondType bondType, bool onRing = true)
     {
         Atom a1 = atom1.GetComponent<Atom>();
         Atom a2 = atom2.GetComponent<Atom>();
-        Vector3 a1Dir = a1.getVbondByIndex(a1Index);
+        Vector3 a1Dir = a1.getVbondByIndex(a1Index);                                          
         Vector3 a2Dir = a2.getVbondByIndex(a2Index);
         if(a1Dir == Vector3.zero || a2Dir == Vector3.zero)
         {
@@ -424,8 +459,12 @@ public class Assembler : MonoBehaviour
                 print("error in accurate connect: bond type error");
                 return;
         }
-        
-        bond.GetComponent<Renderer>().material = DefaultMat;
+
+        Renderer[] renderers = bond.GetComponentsInChildren<Renderer>();
+        foreach(var v in renderers)
+        {
+            v.material = DefaultMat;
+        }
 
         Vector3 transformedDirection = atom1.transform.TransformDirection(new Vector3(a1Dir.x, a1Dir.y, a1Dir.z));
 
@@ -434,7 +473,7 @@ public class Assembler : MonoBehaviour
 
         //bond
         Vector3 scale = bond.transform.lossyScale;
-        scale.y = length * 0.5f;
+        scale.y = length * 0.5f * (scale.y / Config.bondLengthScale);
         bond.transform.localScale = scale;
         bond.transform.LookAt(atom1.transform.position);
         bond.transform.Rotate(new Vector3(90, 0, 0));
@@ -450,13 +489,12 @@ public class Assembler : MonoBehaviour
 
         if (vec1 == vec2)
         {
-            print("rotate 180");
             Vector3 axis = CaculateUtil.GetVerticalDir(vec1);
             atom2.transform.parent.transform.RotateAround(atom2.transform.position, axis, 180);
         }
         else
         {
-
+              
             atom2.transform.parent.transform.RotateAround(atom2.transform.position, Vector3.Cross(vec1, vec2), an);
         }
 
@@ -510,7 +548,6 @@ public class Assembler : MonoBehaviour
 
         if (vec1 == vec2)
         {
-            print("rotate 180");
             Vector3 axis = CaculateUtil.GetVerticalDir(vec1);
             atom2.transform.parent.transform.RotateAround(atom2.transform.position, axis, 180);
         }
@@ -594,10 +631,10 @@ public class Assembler : MonoBehaviour
 	   
     private void MergeTwoMolecules(GameObject dstMole, GameObject otherMole)
     {
-        Molecule mole = dstMole.GetComponent<Molecule>();
+        if (dstMole == otherMole)
+            return;
 
-        print("after");
-        print("child count: " + gameObject.transform.parent.transform.childCount);
+        Molecule mole = dstMole.GetComponent<Molecule>();
 
         List<GameObject> children = new List<GameObject>();
         foreach (Transform child in otherMole.transform)

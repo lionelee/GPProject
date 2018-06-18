@@ -61,7 +61,7 @@ public class GameManager : MonoBehaviour
     {
 		mole.transform.SetParent(buildArea.transform, true);
     }
-
+    
 
     #region /*state-related operation*/
     public static GameObject GetSelectedComponent()
@@ -342,19 +342,25 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public static void ChangeBondType(GameObject oldBond, BondType type)
+    public static void ChangeBondType(GameObject oldBond, BondType newType)
     {
         Bond bondInfo = oldBond.GetComponent<Bond>();
         GameObject Atom1 = bondInfo.A1,
             Atom2 = bondInfo.A2;
         Atom Atom1Info = bondInfo.A1.GetComponent<Atom>(),
             Atom2Info = bondInfo.A2.GetComponent<Atom>();
-        switch (type)
+        AtomsAction Atom1Action = bondInfo.A1.GetComponent<AtomsAction>(),
+            Atom2Action = bondInfo.A2.GetComponent<AtomsAction>();
+        //可能需要单独处理在环上时的情况, 现在未特殊处理，在处理 环上双键到单键 这一操作时要经历，断键-》将环还原为碳链->重新连接成环
+        bool newBondOnRing;
+        int a1Idx, a2Idx;
+        switch (newType)
         {
             case BondType.SINGLE:
                 if (bondInfo.Type == BondType.SINGLE)
                     return;
-
+                oldBond.GetComponent<BondsAction>().Break();
+                Atom1.GetComponent<Assembler>().SelectionConnect(Atom2);
                 break;
             case BondType.DOUBLE:
                 if (bondInfo.Type == BondType.DOUBLE)
@@ -368,11 +374,32 @@ public class GameManager : MonoBehaviour
                     {
                         return;
                     }
+
+                    newBondOnRing = bondInfo.InRing;
+                    //if (!newBondOnRing)
+                    //{
+                    //    oldBond.GetComponent<BondsAction>().Break();
+
+                    //}
+                    //else
+                    //{
+                    oldBond.GetComponent<BondsAction>().TmpBreak();
+                    //}
+                    a1Idx = Atom1.GetComponent<AtomsAction>().VbondSwitchWithNewBond(newType, newBondOnRing);
+                    a2Idx = Atom2.GetComponent<AtomsAction>().VbondSwitchWithNewBond(newType, newBondOnRing);
+                    
+                    Atom1.GetComponent<Assembler>().AccurateConnect(Atom1, a1Idx, Atom2, a2Idx, BondType.DOUBLE, newBondOnRing);
+
                 }
                 //degrade
                 else if (bondInfo.Type == BondType.TRIPLE)
                 {
+                    newBondOnRing = bondInfo.InRing;
+                    oldBond.GetComponent<BondsAction>().TmpBreak();
+                    a1Idx = Atom1.GetComponent<AtomsAction>().VbondSwitchWithNewBond(newType, newBondOnRing);
+                    a2Idx = Atom2.GetComponent<AtomsAction>().VbondSwitchWithNewBond(newType, newBondOnRing);
 
+                    Atom1.GetComponent<Assembler>().AccurateConnect(Atom1, a1Idx, Atom2, a2Idx, BondType.DOUBLE, newBondOnRing);
                 }
                 break;
             case BondType.TRIPLE:
@@ -384,8 +411,18 @@ public class GameManager : MonoBehaviour
                 {
                     return;
                 }
+
+                newBondOnRing = bondInfo.InRing;
+                oldBond.GetComponent<BondsAction>().TmpBreak();
+                a1Idx = Atom1.GetComponent<AtomsAction>().VbondSwitchWithNewBond(newType, newBondOnRing);
+                a2Idx = Atom2.GetComponent<AtomsAction>().VbondSwitchWithNewBond(newType, newBondOnRing);
+
+                Atom1.GetComponent<Assembler>().AccurateConnect(Atom1, a1Idx, Atom2, a2Idx, BondType.DOUBLE, newBondOnRing);
                 break;
         }
-        
+
+        Atom1Info.UpdateMaxBond();
+        Atom2Info.UpdateMaxBond();
+
     }
 }

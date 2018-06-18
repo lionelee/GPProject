@@ -9,6 +9,7 @@ public class Config{
     static public Dictionary<string, float> BondLengthTable = new Dictionary<string, float>();
 
     static public Color UsingSelectedColor = new Color(26 / 255.0f, 160 / 255.0f, 1, 0);
+    static public float bondLengthScale = 0.3f;
 
     static public void Init()
     {

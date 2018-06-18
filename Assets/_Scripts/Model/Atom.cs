@@ -13,6 +13,7 @@ public class Atom : MonoBehaviour
     public int Valence { set; get; }
 	public int Connected { set; get; }
     public bool InRing { set; get; }
+    public BondType MaxBomdType { set; get;}
     public List<Vector4> vbonds;
 	public List<GameObject> Bonds;
 
@@ -22,6 +23,7 @@ public class Atom : MonoBehaviour
     {
         Connected = 0;
         InRing = false;
+        MaxBomdType = BondType.SINGLE;
         Bonds = new List<GameObject>();
     }
 	
@@ -75,6 +77,7 @@ public class Atom : MonoBehaviour
         }
     }
 
+    //get angle of a single bind
 	public Vector3 getAngle(int returnIndex)
     {
         for (int i = 0; i < vbonds.Count; ++i)
@@ -150,5 +153,28 @@ public class Atom : MonoBehaviour
     public string toString()
     {
         return Symbol + " " + Id.ToString() + " " + Valence.ToString() + " ";
+    }
+
+    public void UpdateMaxBond()
+    {
+        MaxBomdType = BondType.SINGLE;
+        foreach(GameObject bond in Bonds)
+        {
+            if(bond.GetComponent<Bond>().Type > MaxBomdType)
+            {
+                MaxBomdType = bond.GetComponent<Bond>().Type;
+            }
+        }
+    }
+
+    public int getVbondIdxOfAtom(GameObject atom, GameObject bond)
+    {
+        int idx = -1;
+        if (bond.GetComponent<Bond>().A1 == atom)
+            idx = bond.GetComponent<Bond>().A1Index;
+        else if(bond.GetComponent<Bond>().A2 == atom)
+            idx = bond.GetComponent<Bond>().A2Index;
+
+        return idx;
     }
 }

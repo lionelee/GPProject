@@ -37,7 +37,7 @@ public class UiDisplayController : MonoBehaviour {
             ComponentOpCanvas.SetActive(true);
         } else
         {
-            ComponentOpCanvas.SetActive(false);
+            GetComponent<ButtonEvents>().OnCanvasCloseButtonClick(ComponentOpCanvas);
         }
     }
 

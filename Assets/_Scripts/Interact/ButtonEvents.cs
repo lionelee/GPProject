@@ -91,9 +91,6 @@ public class ButtonEvents : MonoBehaviour {
             GameManager.GetSelectedComponent().GetComponent<AtomsAction>().Detach();
         } else if(op == "Change Type")
         {
-            //GameManager.GetSelectedComponent().GetComponent<Bond>().Type;
-            //GameManager.GetSelectedComponent().GetComponent<Bond>().A1;
-            //GameManager.GetSelectedComponent().GetComponent<Bond>().A2;
             bondTypeCanvas.SetActive(true);
         } else if(op == "Break"){
             GameManager.GetSelectedComponent().GetComponent<BondsAction>().Break();
@@ -123,6 +120,8 @@ public class ButtonEvents : MonoBehaviour {
         }
 
         GameManager.ChangeBondType(oldBond, bondType);
+        print("233");
+        OnCanvasCloseButtonClick(GetComponent<UiDisplayController>().ComponentOpCanvas);
     }
 
 }

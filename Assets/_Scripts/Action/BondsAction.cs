@@ -43,6 +43,9 @@ public class BondsAction : VRTK_InteractableObject
         List<GameObject> objectToDetach = new List<GameObject>();
         GameObject startAtom = gameObject.GetComponent<Bond>().A2;
         GameObject oppositeAtom = gameObject.GetComponent<Bond>().A1;
+        Atom startAtomInfo = startAtom.GetComponent<Atom>();
+        Atom oppositeAtomInfo = oppositeAtom.GetComponent<Atom>();
+
         List<GameObject> ignoreComponent = new List<GameObject>();
         ignoreComponent.Add(gameObject);
         //DFS
@@ -62,14 +65,31 @@ public class BondsAction : VRTK_InteractableObject
             }
         }
 
+        
+
         //Destroy bond
-        startAtom.GetComponent<Atom>().removeBond(gameObject);
-        oppositeAtom.GetComponent<Atom>().removeBond(gameObject);
+        startAtomInfo.removeBond(gameObject);
+        oppositeAtomInfo.removeBond(gameObject);
+
+        //TODO: break 时分子中的原子id的调整，因为这个问题break时会出问题
+        
+        //调整键角
+        if (gameObject.GetComponent<Bond>().InRing)
+        {
+            //调整环上所有原子的位置
+            startAtom.GetComponent<Assembler>().BreakRingToChain(startAtom, oppositeAtom);
+        }
+        else
+        {
+            startAtom.GetComponent<AtomsAction>().Rebuild();
+            oppositeAtom.GetComponent<AtomsAction>().Rebuild();
+        }
+
         Destroy(gameObject);
     }
     
-    //暂时断开，不做断开后的键角调整
-    public GameObject TmpBreakWithOppositeAtom(GameObject thisAtom)
+    //暂时断开，不做断开后的键角调整, 当断开的键为双键或三键时，或者断开的是环上的键时需要调整键角
+    public void TmpBreak()
     {
         print("breaking!");
         //准备DFS参数
@@ -99,7 +119,5 @@ public class BondsAction : VRTK_InteractableObject
         startAtom.GetComponent<Atom>().removeBond(gameObject);
         oppositeAtom.GetComponent<Atom>().removeBond(gameObject);
         Destroy(gameObject);
-
-        return (thisAtom == startAtom) ? oppositeAtom : startAtom;
     }
 }
