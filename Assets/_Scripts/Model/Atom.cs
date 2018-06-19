@@ -78,7 +78,7 @@ public class Atom : MonoBehaviour
     }
 
     //get angle of a single bind
-	public Vector3 getAngle(int returnIndex)
+	public Vector3 getAngle(ref int returnIndex)
     {
         for (int i = 0; i < vbonds.Count; ++i)
         {
@@ -87,12 +87,25 @@ public class Atom : MonoBehaviour
                 Vector4 v = vbonds[i];
                 v.w = 1;
                 vbonds[i] = v;
-                print(vbonds[i]);
                 returnIndex = i;
                 return new Vector3(v.x, v.y, v.z);
             }
         }
         return Vector3.zero;
+    }
+
+    public int getFreeVbondIdx()
+    {
+        int ret = -1;
+        for (int i = 0; i < vbonds.Count; ++i)
+        {
+            if (vbonds[i].w == 0)
+            {
+                ret = i;
+                break;
+            }
+        }
+        return ret;
     }
 
     public Vector3 getVbondByIndex(int index)

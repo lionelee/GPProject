@@ -45,25 +45,11 @@ public class Assembler : MonoBehaviour
     public void BreakRingToChain(GameObject startAtom, GameObject endAtom)
     {
         List<GameObject> path = DFSPath(startAtom, endAtom);
-        //first Atom
-        /*GameObject curAtom = path[0];
-        GameObject nextBond = path[0].GetComponent<Atom>().getBond(path[1]);
-
-        BondType nextBondType = nextBond.GetComponent<Bond>().Type;
-        nextBond.GetComponent<BondsAction>().TmpBreak();*/
-
-        //set all atoms and bonds OUT OF ring
-        //first set all relative bonds out of ring
-        /*for (int i = 0; i < path.Count - 1; ++i)
-        {
-            path[i].GetComponent<Atom>().getBond(path[i + 1]).GetComponent<Bond>().InRing = false;
-        }*/
 
         for(int i = 0;i < path.Count; i++)
         {
             path[i].GetComponent<AtomsAction>().Rebuild();
         }
-
 
         //set atom out of ring, binds has been set in Rebuild()
         for (int i = 0; i < path.Count; i++)
@@ -132,15 +118,10 @@ public class Assembler : MonoBehaviour
         st.Push(atom1);
 
         int atomN = atom1.transform.parent.GetComponent<Molecule>().AtomNum;
-        bool[] visited = new bool[atomN];
-        GameObject[] parent = new GameObject[atomN]; 
-        for (int i = 0; i < atomN; ++i)
-            visited[i] = false;
-        for (int i = 0; i < atomN; ++i)
-            parent[i] = null;
+        List<GameObject> visited = new List<GameObject>();
+        Dictionary<GameObject, GameObject> parent = new Dictionary<GameObject, GameObject>();
 
-        int aid = a1.Id;
-        visited[aid] = true;
+        visited.Add(atom1);
         bool found = false;
         while (st.Count != 0)
         {
@@ -151,19 +132,15 @@ public class Assembler : MonoBehaviour
                 {
                     Bond b = bond.GetComponent<Bond>();
                     GameObject adj = b.getAdjacent(par);
-                    aid = adj.GetComponent<Atom>().Id;
-                    if (visited[aid]) continue;
-                    parent[aid] = par;
-                    if (aid == a2.Id)
+                    if (visited.Contains(adj)) continue;
+                    parent.Add(adj, par);
+                    if (adj == atom2)
                     {
                         found = true;
                         goto end;
                     }
-                    if (!visited[aid])
-                    {
-                        visited[aid] = true;
-                        st.Push(adj);
-                    }
+                    visited.Add(adj);
+                    st.Push(adj);
                 }
             }
         }
@@ -172,14 +149,11 @@ public class Assembler : MonoBehaviour
         {
             //path.Add(atom1);
             path.Add(atom2);
-            int nextId;
-            int thisId;
-            while (parent[aid] != null)
+            GameObject cur = atom2;
+            while (parent.ContainsKey(cur))
             {
-                path.Add(parent[aid]);
-                thisId = aid;
-                nextId = parent[aid].GetComponent<Atom>().Id;
-                aid = parent[aid].GetComponent<Atom>().Id;
+                path.Add(parent[cur]);
+                cur = parent[cur];
             }
         }
         return path;
@@ -223,11 +197,10 @@ public class Assembler : MonoBehaviour
             anchorAtom.transform.forward = anchorZ;
             LookAtPoint = anchorAtom.transform.TransformPoint(0, 0, 1);
 
-            SetRingAnchor(anchorAtom, angle);
-
             anchorY = Quaternion.AngleAxis(360.0f/num, anchorAtom.transform.forward) * anchorY;
             anchorAtom.transform.LookAt(LookAtPoint, anchorY);
 
+            SetRingAnchor(anchorAtom, angle);
 
             //connect to prev
             prevIndex = prevAnchor.GetComponent<Atom>().vbonds.Count - 1;
@@ -244,10 +217,12 @@ public class Assembler : MonoBehaviour
 
         anchorAtom.transform.forward = anchorZ;
         LookAtPoint = anchorAtom.transform.TransformPoint(0, 0, 1);
-        SetRingAnchor(anchorAtom, angle);   
+           
 
         anchorY = Quaternion.AngleAxis(2 * angle * Mathf.Rad2Deg, anchorAtom.transform.forward) * anchorY;
         anchorAtom.transform.LookAt(LookAtPoint, anchorY);
+
+        SetRingAnchor(anchorAtom, angle);
 
         //connect to prev
         prevIndex = prevAnchor.GetComponent<Atom>().vbonds.Count - 1;
@@ -288,6 +263,9 @@ public class Assembler : MonoBehaviour
         b.A2 = lastAtomInfo.gameObject;
         b.A1Index = firstIdx;
         b.A2Index = lastIdx;
+
+        
+
         b.Type = BondType.SINGLE;
         firstAtomInfo.addBond(lastBond);
         lastAtomInfo.addBond(lastBond);
@@ -302,7 +280,7 @@ public class Assembler : MonoBehaviour
         path[path.Count - 1].GetComponent<Atom>().getBond(path[0]).GetComponent<Bond>().InRing = true;
     }
 
-    //only used for connect as ring, on a special condition that C原子的支路是环 
+    //only used for connect as ring, on a special condition that 四价元素的支路是环 
     //此时，原子的vbond 3、4位连在同一环上，1、2位为空
     private void AdjustVbondIdxOnAtom(GameObject atom)
     {
@@ -432,6 +410,8 @@ public class Assembler : MonoBehaviour
         Vector3 a2Dir = a2.getVbondByIndex(a2Index);
         if(a1Dir == Vector3.zero || a2Dir == Vector3.zero)
         {
+            print("a1Idx: " + a1Index + " a2Idx: " + a2Index);
+            print("a1Dir: " + a1Dir + " a2Dir: " + a2Dir);
             print("error in accurate connect: vbond has been used");
             return;
         }
@@ -517,8 +497,8 @@ public class Assembler : MonoBehaviour
         int a1Index = -1, a2Index = -1;
         Atom a1 = atom1.GetComponent<Atom>();
         Atom a2 = atom2.GetComponent<Atom>();
-        Vector3 a1Dir = a1.getAngle(a1Index);
-        Vector3 a2Dir = a2.getAngle(a2Index);
+        Vector3 a1Dir = a1.getAngle(ref a1Index);
+        Vector3 a2Dir = a2.getAngle(ref a2Index);
 
         float length = GetBondLength(a1, a2);
         
@@ -597,7 +577,7 @@ public class Assembler : MonoBehaviour
         transform.parent.transform.position += expectedPos - transform.position;
         //rotate    
         Vector3 vec1 = (sbond.transform.position - catom.transform.position).normalized;
-        Vector3 vec2 = (transform.TransformDirection(a2.getAngle(selfBondIndex))).normalized;
+        Vector3 vec2 = (transform.TransformDirection(a2.getAngle(ref selfBondIndex))).normalized;
 
         float an = 180 - Vector3.Angle(vec1, vec2);
         if (vec1 == vec2)

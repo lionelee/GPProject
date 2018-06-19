@@ -364,30 +364,26 @@ public class GameManager : MonoBehaviour
                 break;
             case BondType.DOUBLE:
                 if (bondInfo.Type == BondType.DOUBLE)
+                {
+                    print("already double bond");
                     return;
+                }
                 //upgrade, check free bond
                 else if (bondInfo.Type == BondType.SINGLE)
                 {
 
-                    if (Mathf.Abs(Atom1Info.Valence) - Atom1Info.Connected < 2 ||
-                        Mathf.Abs(Atom2Info.Valence) - Atom2Info.Connected < 2)
+                    if (Mathf.Abs(Atom1Info.Valence) - Atom1Info.Connected < 1 ||
+                        Mathf.Abs(Atom2Info.Valence) - Atom2Info.Connected < 1)
                     {
                         return;
                     }
 
                     newBondOnRing = bondInfo.InRing;
-                    //if (!newBondOnRing)
-                    //{
-                    //    oldBond.GetComponent<BondsAction>().Break();
-
-                    //}
-                    //else
-                    //{
                     oldBond.GetComponent<BondsAction>().TmpBreak();
                     //}
                     a1Idx = Atom1.GetComponent<AtomsAction>().VbondSwitchWithNewBond(newType, newBondOnRing);
                     a2Idx = Atom2.GetComponent<AtomsAction>().VbondSwitchWithNewBond(newType, newBondOnRing);
-                    
+
                     Atom1.GetComponent<Assembler>().AccurateConnect(Atom1, a1Idx, Atom2, a2Idx, BondType.DOUBLE, newBondOnRing);
 
                 }
@@ -406,8 +402,14 @@ public class GameManager : MonoBehaviour
                 if (bondInfo.Type == BondType.TRIPLE)
                     return;
 
-                if (Mathf.Abs(Atom1Info.Valence) - Atom1Info.Connected < 3 ||
-                    Mathf.Abs(Atom2Info.Valence) - Atom2Info.Connected < 3)
+                if (bondInfo.Type == BondType.SINGLE && (Mathf.Abs(Atom1Info.Valence) - Atom1Info.Connected < 2 ||
+                    Mathf.Abs(Atom2Info.Valence) - Atom2Info.Connected < 2))
+                {
+                    return;
+                }
+
+                if (bondInfo.Type == BondType.DOUBLE && (Mathf.Abs(Atom1Info.Valence) - Atom1Info.Connected < 1 ||
+                    Mathf.Abs(Atom2Info.Valence) - Atom2Info.Connected < 1))
                 {
                     return;
                 }
@@ -417,7 +419,7 @@ public class GameManager : MonoBehaviour
                 a1Idx = Atom1.GetComponent<AtomsAction>().VbondSwitchWithNewBond(newType, newBondOnRing);
                 a2Idx = Atom2.GetComponent<AtomsAction>().VbondSwitchWithNewBond(newType, newBondOnRing);
 
-                Atom1.GetComponent<Assembler>().AccurateConnect(Atom1, a1Idx, Atom2, a2Idx, BondType.DOUBLE, newBondOnRing);
+                Atom1.GetComponent<Assembler>().AccurateConnect(Atom1, a1Idx, Atom2, a2Idx, BondType.TRIPLE, newBondOnRing);
                 break;
         }
 

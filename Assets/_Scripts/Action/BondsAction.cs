@@ -38,7 +38,6 @@ public class BondsAction : VRTK_InteractableObject
     //TODO: change vbonds when break double bond or triple bond
     public void Break()
     {
-        print("breaking!");
         //准备DFS参数
         List<GameObject> objectToDetach = new List<GameObject>();
         GameObject startAtom = gameObject.GetComponent<Bond>().A2;
@@ -59,13 +58,21 @@ public class BondsAction : VRTK_InteractableObject
             GameManager.PutIntoBuildArea(mole);
 
             mole.transform.position = startAtom.transform.position;
+            Molecule molecule = mole.GetComponent<Molecule>();
+
             foreach (GameObject component in objectToDetach)
             {
                 component.transform.parent = mole.transform;
+                if (component.tag != "Bond" && component.tag != "Component")
+                    continue;
+                component.transform.parent = mole.transform;
+                if (component.tag != "Bond")
+                {
+                    component.GetComponent<Atom>().Id = molecule.CurrentAtomId++;
+                    molecule.AtomNum++;
+                }
             }
         }
-
-        
 
         //Destroy bond
         startAtomInfo.removeBond(gameObject);
@@ -91,7 +98,6 @@ public class BondsAction : VRTK_InteractableObject
     //暂时断开，不做断开后的键角调整, 当断开的键为双键或三键时，或者断开的是环上的键时需要调整键角
     public void TmpBreak()
     {
-        print("breaking!");
         //准备DFS参数
         List<GameObject> objectToDetach = new List<GameObject>();
         GameObject startAtom = gameObject.GetComponent<Bond>().A2;
@@ -109,9 +115,20 @@ public class BondsAction : VRTK_InteractableObject
             GameManager.PutIntoBuildArea(mole);
 
             mole.transform.position = startAtom.transform.position;
+
+            Molecule molecule = mole.GetComponent<Molecule>();
+
             foreach (GameObject component in objectToDetach)
             {
                 component.transform.parent = mole.transform;
+                if (component.tag != "Bond" && component.tag != "Component")
+                    continue;
+                component.transform.parent = mole.transform;
+                if (component.tag != "Bond")
+                {
+                    component.GetComponent<Atom>().Id = molecule.CurrentAtomId++;
+                    molecule.AtomNum++;
+                }
             }
         }
 

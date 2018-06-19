@@ -142,6 +142,7 @@ public class AtomsAction : VRTK_InteractableObject
         }
         
         //全是单键
+
         foreach(var v in oppositeAtomWithBondType)
         {
             gameObject.GetComponent<Assembler>().SelectionConnect(v.Key);
@@ -166,6 +167,7 @@ public class AtomsAction : VRTK_InteractableObject
         int specialAtomIdx = 0;
 
         if (newBondType == BondType.DOUBLE) {
+            //TODO: debug on here
             if (!newBondOnRing)
             {
                 //原子上仍然连接有双键，只可能有一个，记录在specialBond, 只有四键元素有可能
@@ -240,7 +242,7 @@ public class AtomsAction : VRTK_InteractableObject
                         oppositeAtomWithBondType.Add(oppositeAtom, type);
                     }
                     //考虑两个键和三个键的元素
-                    switch (atomInfo.vbonds.Count)
+                    switch (Mathf.Abs(atomInfo.Valence))
                     {
                         case 2:
                             atomInfo.vbonds = new List<Vector4>(Config.BondAngleTable["H"]);
@@ -256,8 +258,8 @@ public class AtomsAction : VRTK_InteractableObject
                     foreach (var v in oppositeAtomWithBondType)
                     {
                         //gameObject.GetComponent<Assembler>().SelectionConnect(v.Key);
-                        int oppositeIdx = -1;
-                        v.Key.GetComponent<Atom>().getAngle(oppositeIdx);
+                        int oppositeIdx = v.Key.GetComponent<Atom>().getFreeVbondIdx();
+
                         gameObject.GetComponent<Assembler>().AccurateConnect(gameObject, singleBindIdx++, v.Key, oppositeIdx, BondType.SINGLE, false);
                     }
                     newBondIdx = 0;
@@ -420,8 +422,8 @@ public class AtomsAction : VRTK_InteractableObject
 
                     foreach (var v in oppositeAtomWithBondType)
                     {
-                        int oppositeIdx = -1;
-                        v.Key.GetComponent<Atom>().getAngle(oppositeIdx);
+                        int oppositeIdx = v.Key.GetComponent<Atom>().getFreeVbondIdx();
+
                         gameObject.GetComponent<Assembler>().AccurateConnect(gameObject, 0, v.Key, oppositeIdx, BondType.SINGLE, false);
                     }
 
@@ -459,8 +461,8 @@ public class AtomsAction : VRTK_InteractableObject
                 int singleBindIdx = 1;
                 foreach (var v in oppositeAtomWithBondType)
                 {
-                    int oppositeIdx = -1;
-                    v.Key.GetComponent<Atom>().getAngle(oppositeIdx);
+                    int oppositeIdx = v.Key.GetComponent<Atom>().getFreeVbondIdx();
+                    
                     gameObject.GetComponent<Assembler>().AccurateConnect(gameObject, singleBindIdx++, v.Key, oppositeIdx, BondType.SINGLE, false);
                 }
                 newBondIdx = 0;
@@ -540,9 +542,8 @@ public class AtomsAction : VRTK_InteractableObject
                 //int singleBindIdx = 1;
                 foreach (var v in oppositeAtomWithBondType)
                 {
-                    //gameObject.GetComponent<Assembler>().SelectionConnect(v.Key);
-                    int oppositeIdx = -1;
-                    v.Key.GetComponent<Atom>().getAngle(oppositeIdx);
+                    int oppositeIdx = v.Key.GetComponent<Atom>().getFreeVbondIdx();
+
                     gameObject.GetComponent<Assembler>().AccurateConnect(gameObject, 0, v.Key, oppositeIdx, BondType.SINGLE, false);
                 }
             }
