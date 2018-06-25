@@ -26,7 +26,7 @@ public class LinearMover : MonoBehaviour {
 
     void Move()
     {
-		Vector3 jointPos = gameObject.GetComponent<MoleculesAction>().GetJointPosition();
+		/*Vector3 jointPos = gameObject.GetComponent<MoleculesAction>().GetJointPosition();
         Vector3 RightControllerPos = VRTK_DeviceFinder.GetControllerRightHand().transform.position;
 		Vector3 moveDir = (RightControllerPos - jointPos).normalized;
 
@@ -36,6 +36,6 @@ public class LinearMover : MonoBehaviour {
             //transform.Translate (moveDir * touchAxis.y * moveSpeed * Time.deltaTime, Space.World);
 
 			transform.position += moveDir * touchAxis.y * moveSpeed * Time.deltaTime;
-        }
+        }*/
     }
 }

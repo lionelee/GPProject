@@ -474,8 +474,18 @@ public class Assembler : MonoBehaviour
         }
         else
         {
-              
             atom2.transform.parent.transform.RotateAround(atom2.transform.position, Vector3.Cross(vec1, vec2), an);
+        }
+
+        //旋转使得碳原子在同一平面
+        if(bondType == BondType.DOUBLE && !onRing)
+        {
+            Vector3 atom1Y = atom1.transform.up;
+            Vector3 atom2Y = atom2.transform.up;
+
+            float anOfY = Vector3.Angle(atom1Y, atom2Y);
+
+            atom2.transform.parent.RotateAround(atom2.transform.position, vec1, anOfY);
         }
 
         MergeTwoMolecules(atom1.transform.parent.gameObject, atom2.transform.parent.gameObject);

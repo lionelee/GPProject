@@ -19,7 +19,13 @@ public class ShowComponentCanvas : VRTK_InteractableObject
     public override void StartUsing(VRTK_InteractUse usingObject)
     {
         base.StartUsing(usingObject);
-        if(GameManager.interacteMode == InteracteMode.GRAB)
-            GameObject.FindGameObjectWithTag("EventManager").GetComponent<UiDisplayController>().ShowSelectAtomCanvas(true);
+        if (GameManager.interacteMode == InteracteMode.GRAB)
+        {
+            print("click");
+            if (gameObject.name == "Atoms")
+                GameObject.FindGameObjectWithTag("EventManager").GetComponent<UiDisplayController>().ShowSelectAtomCanvas(true);
+            else
+                GameObject.FindGameObjectWithTag("EventManager").GetComponent<UiDisplayController>().ShowPrefabCanvas(true);
+        }
     }
 }

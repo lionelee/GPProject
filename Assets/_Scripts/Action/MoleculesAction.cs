@@ -23,7 +23,7 @@ public class MoleculesAction : VRTK_InteractableObject
     public override void Grabbed(VRTK_InteractGrab grabbingObject)
     {
         base.Grabbed(grabbingObject);
-		GameManager.SetLinearMovableMole(gameObject);
+		//GameManager.SetLinearMovableMole(gameObject);
         foreach (Assembler assembler in gameObject.GetComponentsInChildren<Assembler>())
         {
             assembler.SetGrabbed();
@@ -35,7 +35,7 @@ public class MoleculesAction : VRTK_InteractableObject
 
     public override void Ungrabbed(VRTK_InteractGrab previousGrabbingObject)
     {
-        GameManager.CancelLinearMovable();
+        //GameManager.CancelLinearMovable();
         base.Ungrabbed(previousGrabbingObject);
 		/*gameObject.GetComponent<Rotator> ().enabled = false;
 		previousGrabbingObject.gameObject.GetComponent<RotateController> ().RemoveMolecule ();*/

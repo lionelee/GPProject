@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class UiDisplayController : MonoBehaviour {
     public GameObject ComponentOpCanvas;
     public GameObject SelectAtomCanvas;
+    public GameObject PrefabCanvas;
 
     public void ShowComponentOpCanvas(bool stat, GameObject compnonet)
     {
@@ -14,6 +15,7 @@ public class UiDisplayController : MonoBehaviour {
             if(compnonet.GetComponent<Atom>() != null)
             {
                 ComponentOpCanvas.GetComponentInChildren<Text>().text = "Atom " + compnonet.GetComponent<Atom>().Symbol;
+                ComponentOpCanvas.GetComponentInChildren<Text>().text += "\nId " + compnonet.GetComponent<Atom>().Id;
             }
             else
             {
@@ -46,10 +48,24 @@ public class UiDisplayController : MonoBehaviour {
         if (stat == true)
         {
             SelectAtomCanvas.SetActive(true);
+            GetComponent<ButtonEvents>().OnCanvasCloseButtonClick(PrefabCanvas);
         }
         else
         {
-            SelectAtomCanvas.SetActive(false);
+            GetComponent<ButtonEvents>().OnCanvasCloseButtonClick(SelectAtomCanvas);
+        }
+    }
+
+    public void ShowPrefabCanvas(bool stat)
+    {
+        if (stat == true)
+        {
+            PrefabCanvas.SetActive(true);
+            GetComponent<ButtonEvents>().OnCanvasCloseButtonClick(SelectAtomCanvas);
+        }
+        else
+        {
+            GetComponent<ButtonEvents>().OnCanvasCloseButtonClick(PrefabCanvas);
         }
     }
 

@@ -22,7 +22,6 @@ GameObject:
   - component: {fileID: 114278475253106670}
   - component: {fileID: 54860424541539292}
   - component: {fileID: 114943824606756332}
-  - component: {fileID: 114982902517483852}
   - component: {fileID: 114644077324811816}
   m_Layer: 0
   m_Name: Molecule
@@ -120,15 +119,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotationSpeed: 180
---- !u!114 &114982902517483852
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1594423098900344}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0c4e21219c4987b46a510f3036e851b3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  moveSpeed: 100

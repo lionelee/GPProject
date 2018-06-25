@@ -28,6 +28,9 @@ public class GameManager : MonoBehaviour
     static public GameObject prefebDoubleBond;
     static public GameObject prefebTrippleBond;
 
+    //complex prefabs
+    static public GameObject prefebCRing3;
+
 
     // Use this for initialization
     void Start()
@@ -45,6 +48,9 @@ public class GameManager : MonoBehaviour
         prefebSingleBond = (GameObject)Resources.Load("_Prefebs/SingleBond") as GameObject;
         prefebDoubleBond = (GameObject)Resources.Load("_Prefebs/DoubleBond") as GameObject;
         prefebTrippleBond = (GameObject)Resources.Load("_Prefebs/TrippleBond") as GameObject;
+
+        prefebCRing3 = (GameObject)Resources.Load("_Prefebs/CRing3") as GameObject;
+
     }
 
     // Update is called once per frame
@@ -59,7 +65,8 @@ public class GameManager : MonoBehaviour
 
     public static void PutIntoBuildArea(GameObject mole)
     {
-		mole.transform.SetParent(buildArea.transform, true);
+        mole.transform.SetParent(buildArea.transform, true);
+
     }
     
 
@@ -98,15 +105,15 @@ public class GameManager : MonoBehaviour
         VRTK_DeviceFinder.GetControllerLeftHand().GetComponent<RotateController>().RemoveMolecule();
     }
 
-    public static void SetLinearMovableMole(GameObject mole)
+    /*public static void SetLinearMovableMole(GameObject mole)
     {
         VRTK_DeviceFinder.GetControllerRightHand().GetComponent<LinearmoveController>().SetMolecule(mole);
-    }
+    }*/
 
-    public static void CancelLinearMovable()
+    /*public static void CancelLinearMovable()
     {
         VRTK_DeviceFinder.GetControllerRightHand().GetComponent<LinearmoveController>().RemoveMolecule();
-    }
+    }*/
     #endregion
 
     #region /*methods for interaction*/
@@ -172,6 +179,52 @@ public class GameManager : MonoBehaviour
         atom.vbonds = new List<Vector4>(Config.BondAngleTable[symbol]);
         generatedAtom.transform.parent = mole.transform;
         generatedAtom.transform.Translate(mole.transform.position - generatedAtom.transform.position);
+    }
+
+    public static void GenerateComplexPrefab(string type, int num)
+    {
+        print("type :" + type + "num: " + num);
+        GameObject newComponentPos = GameObject.FindGameObjectWithTag("NewComponentPos");
+        // clear atoms in component area
+        for (int i = 0; i < newComponentPos.transform.childCount; i++)
+            DestroyObject(newComponentPos.transform.GetChild(i).gameObject);
+
+        GameObject molecule = null;
+
+
+        if (type == "CRing")
+        {
+            switch (num)
+            {
+                case 3:
+                    molecule = Instantiate(prefebCRing3);
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    break;
+                case 6:
+                    break;
+            }
+        } else if(type == "CChain")
+        {
+            switch (num)
+            {
+                case 3:
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    break;
+                case 6:
+                    break;
+            }
+        }
+
+        molecule.transform.parent = newComponentPos.transform;
+        molecule.transform.Translate(newComponentPos.transform.position - molecule.transform.position);
+
+        molecules.Add(molecule);
     }
     #endregion
 
@@ -332,6 +385,7 @@ public class GameManager : MonoBehaviour
             }
 
             GameObject.FindGameObjectWithTag("EventManager").GetComponent<UiDisplayController>().ShowSelectAtomCanvas(false);
+            GameObject.FindGameObjectWithTag("EventManager").GetComponent<UiDisplayController>().ShowPrefabCanvas(false);
         } else
         {
             foreach(GameObject molecule in molecules)

@@ -11,6 +11,7 @@ public class ButtonEvents : MonoBehaviour {
     public List<Button> bondTypeButtons;
     public GameObject valenceCanvas;
     public GameObject bondTypeCanvas;
+    public GameObject AtomNumCanvas;
 
     public void OnAtomButtonClick(string symbol)
     {
@@ -41,6 +42,27 @@ public class ButtonEvents : MonoBehaviour {
 
     }
 
+    public void OnComplexPrefabClick(string type)
+    {
+        AtomNumCanvas.GetComponent<Text>().text = type;
+        AtomNumCanvas.SetActive(true);
+    }
+
+    public void OnAtomNumClick(GameObject button)
+    {
+        int num = int.Parse(button.GetComponentInChildren<Text>().text);
+        string type = AtomNumCanvas.GetComponent<Text>().text;
+
+        GameManager.GenerateComplexPrefab(type, num);
+    }
+
+    public void OnSimplePrefabClick(string type)
+    {
+        AtomNumCanvas.SetActive(false);
+
+
+    }
+
     public void OnCanvasCloseButtonClick(GameObject canvas)
     {
         
@@ -53,6 +75,9 @@ public class ButtonEvents : MonoBehaviour {
         } else if(name == "ComponentOperationCanvas")
         {
             bondTypeCanvas.SetActive(false);
+        } else if(name == "PrefabCanvas")
+        {
+            AtomNumCanvas.SetActive(false);
         }
     }
 
