@@ -7,6 +7,7 @@ public class Config{
     static public Dictionary<string, List<int>> ValenceTable = new Dictionary<string, List<int>>();
     static public Dictionary<string, List<Vector4>> BondAngleTable = new Dictionary<string, List<Vector4>>();
     static public Dictionary<string, float> BondLengthTable = new Dictionary<string, float>();
+    static public Dictionary<int, List<string>> SmilesTable = new Dictionary<int, List<string>>();
 
     static public Color UsingSelectedColor = new Color(26 / 255.0f, 160 / 255.0f, 1, 0);
     static public float bondLengthScale = 0.3f;
@@ -68,6 +69,14 @@ public class Config{
         BondLengthTable.Add("NS", 0.7f);
 
         BondLengthTable.Add("SS", 0.7f);
+
+        // initialize smiles table
+        SmilesTable.Add(0, new List<string> { "C=CO", "C(O)=C"});
+        SmilesTable.Add(1, new List<string> { "C1(N)CCCCC1", "C1C(N)CCCC1", "C1CC(N)CCC1", "C1CCC(N)CC1", "C1CCCC(N)C1", "C1CCCCC1N" });
+        SmilesTable.Add(2, new List<string> { "CC1=C(O)C=CC=Cl", "CC1=CC=CC=C1O", "CC1=CC=CC(O)=C1", "CC1=CC(O)=CC=C1", "CC1=CC=C(O)C=C1",
+                                                "C(O)C1=CC=CC=C1", "C(C1C=CC=CC=1)O", 
+                                                "C1(OC)=CC=CC=C1", "C1=C(OC)C=CC=C1", "C1=CC(OC)=CC=C1","C1=CC=C(OC)C=C1","C1=CC=CC(OC)=C1","C1=CC=CC=C1OC",});
+
     }
 }
 

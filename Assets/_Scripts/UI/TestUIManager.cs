@@ -24,9 +24,9 @@ public class TestUIManager : MonoBehaviour {
 	void Start () {
         confirmButton.GetComponent<Button>().interactable = false;
         testTextContent = new Dictionary<int, string>();
-        testTextContent.Add(0, "请组装出乙烯醇的分子结构, 组装完成后选中分子");
-        testTextContent.Add(1, "请组装出环己胺的分子结构, 组装完成后选中分子");
-        testTextContent.Add(2, "请组装出间甲基苯甲醚的分子结构, 组装完成后选中分子");
+        testTextContent.Add(0, "1. 请组装出乙烯醇的分子结构, 组装完成后选中分子");
+        testTextContent.Add(1, "2. 请组装出环己胺的分子结构, 组装完成后选中分子");
+        testTextContent.Add(2, "3. 请组装分子式为 C7H6O，且包含苯环的分子");
     }
 	
 	// Update is called once per frame
@@ -50,15 +50,24 @@ public class TestUIManager : MonoBehaviour {
     public void OnConfirmButtonClick()
     {
         //exam
-        if (true)
+        string type = "";
+        if (GameManager.MoleculeMatch(testLevel, ref type))
         {
             if(testLevel == 2)
             {
-                testText.GetComponent<Text>().text = "通过组装测试！";
                 confirmButton.SetActive(false);
-
+                exitButton.SetActive(true);
+                continueButton.SetActive(true);
+                testText.GetComponent<Text>().text = "组装的结构为: " + type + "通过组装测试！";
             }
-            testLevel++;
+            else
+            {
+                confirmButton.SetActive(false);
+                exitButton.SetActive(false);
+                continueButton.SetActive(true);
+                testText.GetComponent<Text>().text = "通过组装测试！";
+                testLevel++;
+            }
         }
         else
         {
@@ -86,6 +95,7 @@ public class TestUIManager : MonoBehaviour {
     {
         testLevel = 0;
         enterTestButton.SetActive(true);
+        enterTestButton.GetComponent<Button>().interactable = true;
         logoQuad.SetActive(true);
 
         testBackImage.SetActive(false);

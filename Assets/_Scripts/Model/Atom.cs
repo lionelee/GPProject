@@ -77,7 +77,7 @@ public class Atom : MonoBehaviour
         }
     }
 
-    //get angle of a single bind
+
 	public Vector3 getAngle(ref int returnIndex)
     {
         for (int i = 0; i < vbonds.Count; ++i)
@@ -165,7 +165,7 @@ public class Atom : MonoBehaviour
 
     public string toString()
     {
-        return Symbol + " " + Id.ToString() + " " + Valence.ToString() + " ";
+        return Symbol + " " + Id.ToString() + " " + Valence.ToString() + " " + InRing.ToString() + " " + MaxBomdType.ToString() + " ";
     }
 
     public void UpdateMaxBond()

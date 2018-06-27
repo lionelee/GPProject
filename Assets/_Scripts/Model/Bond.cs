@@ -26,6 +26,20 @@ public class Bond : MonoBehaviour{
         return null;
     }
 
+    public string toSymbol()
+    {
+        switch (Type)
+        {
+            case BondType.SINGLE:
+                return "-";
+            case BondType.DOUBLE:
+                return "=";
+            case BondType.TRIPLE:
+                return "#";
+        }
+        return null;
+    }
+
     public string toString()
     {
         return "Bond" + " " + Type.ToString() + " " + A1.GetComponent<Atom>().Id.ToString() + " " 

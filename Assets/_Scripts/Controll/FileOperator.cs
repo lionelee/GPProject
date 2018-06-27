@@ -76,7 +76,7 @@ public class FileOperator
             }
             else
             {
-                if (sArray.Length != 4)
+                if (sArray.Length != 6)
                 {
                     Debug.Log("File Damaged.");
                     return -1;

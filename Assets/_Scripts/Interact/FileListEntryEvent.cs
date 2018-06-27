@@ -5,7 +5,7 @@ public class FileListEntryEvent : MonoBehaviour {
 
     public void OnClick(Text text)
     {
-        GameObject.FindGameObjectWithTag("EventManager").GetComponent<FileOperationEvents>().FileOpCanvas.SetActive(false);
+        GameObject.Find("EventManager").GetComponent<FileOperationEvents>().FileOpCanvas.SetActive(false);
         FileOperator.ReadModel(text.text);
     }
 }

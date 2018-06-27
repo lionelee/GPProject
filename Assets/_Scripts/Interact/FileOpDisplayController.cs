@@ -10,7 +10,10 @@ public class FileOpDisplayController : VRTK_InteractableObject
 
     public override void StartUsing(VRTK_InteractUse usingObject)
     {
+        print("using");
         base.StartUsing(usingObject);
+        
         FileOpCanvas.SetActive(true);
     }
+
 }

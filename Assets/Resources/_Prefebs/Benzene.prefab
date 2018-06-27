@@ -1492,7 +1492,7 @@ MonoBehaviour:
   A1Index: 1
   A2Index: 2
   Type: 1
-  InRing: 0
+  InRing: 1
 --- !u!114 &114091091674477168
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1642,7 +1642,7 @@ MonoBehaviour:
   A1Index: 2
   A2Index: 1
   Type: 1
-  InRing: 0
+  InRing: 1
 --- !u!114 &114536486659311270
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1718,7 +1718,7 @@ MonoBehaviour:
   A1Index: 2
   A2Index: 1
   Type: 1
-  InRing: 0
+  InRing: 1
 --- !u!114 &114662286453002426
 MonoBehaviour:
   m_ObjectHideFlags: 1

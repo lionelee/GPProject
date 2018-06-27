@@ -5,6 +5,7 @@ using System;
 public class FileOperationEvents : MonoBehaviour {
 
     public GameObject FileOpCanvas;
+    public GameObject KeyboardInput;
 
     public void OnOpenButtonClick(GameObject FileBrowser)
     {
@@ -12,7 +13,7 @@ public class FileOperationEvents : MonoBehaviour {
         FileBrowser.SetActive(true);
     }
 
-    public void OnSaveButtonClick()
+    public void OnSaveButtonClick(GameObject KeyboardInput)
     {
         FileOpCanvas.SetActive(false);
         if (GameManager.molecules.Count == 0)
@@ -20,7 +21,6 @@ public class FileOperationEvents : MonoBehaviour {
             Debug.Log("Nothing to save");
             return;
         }
-        string path = "Molecule" + DateTime.Now.ToString("yyMMddHHmmssff");
-        FileOperator.SaveModel(path);
+        KeyboardInput.SetActive(true);
     }
 }

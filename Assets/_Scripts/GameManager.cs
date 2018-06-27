@@ -167,7 +167,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public static void GenerateAtom(string symbol, int valence)
+    public static GameObject GenerateAtom(string symbol, int valence)
     {
         GameObject newComponentPos = GameObject.FindGameObjectWithTag("NewComponentPos");
         // clear atoms in component area
@@ -200,7 +200,7 @@ public class GameManager : MonoBehaviour
         {
             generatedAtom = Instantiate(prefebSulfur);
         }
-        else return;
+        else return null;
 
         Atom atom = generatedAtom.AddComponent<Atom>();
         atom.Id = mole.GetComponent<Molecule>().CurrentAtomId++;
@@ -209,6 +209,7 @@ public class GameManager : MonoBehaviour
         atom.vbonds = new List<Vector4>(Config.BondAngleTable[symbol]);
         generatedAtom.transform.parent = mole.transform;
         generatedAtom.transform.Translate(mole.transform.position - generatedAtom.transform.position);
+        return generatedAtom;
     }
 
     public static void GenerateComplexPrefab(string type, int num)
@@ -330,13 +331,26 @@ public class GameManager : MonoBehaviour
             default: return;
         }
         
-        generatedAtom.transform.position = TypeConvert.StrToVec3(info[3]);
+        generatedAtom.transform.position = TypeConvert.StrToVec3(info[5]);
         Atom atom = generatedAtom.AddComponent<Atom>();
         atom.Id = int.Parse(info[1]);
         atom.Symbol = symbol;
         atom.Connected = 0;
         atom.Valence = int.Parse(info[2]);
         atom.vbonds = new List<Vector4>(Config.BondAngleTable[symbol]);
+        atom.InRing = bool.Parse(info[3]);
+        switch (info[4])
+        {
+            case "SINGLE":
+                atom.MaxBomdType = BondType.SINGLE;
+                break;
+            case "DOUBLE":
+                atom.MaxBomdType = BondType.DOUBLE;
+                break;
+            case "TRIPLE":
+                atom.MaxBomdType = BondType.TRIPLE;
+                break;
+        }
 
         generatedAtom.transform.parent = mole.transform;
         mole.GetComponent<Molecule>().CurrentAtomId++;
@@ -390,7 +404,7 @@ public class GameManager : MonoBehaviour
         Vector3 pos1 = atom1.transform.position, pos2 = atom2.transform.position;
         generatedBond.transform.position = Vector3.Lerp(pos1, pos2, 0.5f);
         Vector3 scale = generatedBond.transform.lossyScale;
-        scale.y = Vector3.Distance(pos1, pos2) * 0.5f;
+        scale.y = Vector3.Distance(pos1, pos2) * 0.5f * (scale.y / 0.3f);
         generatedBond.transform.localScale = scale;
         generatedBond.transform.LookAt(pos2);
         generatedBond.transform.Rotate(new Vector3(90, 0, 0));
@@ -400,6 +414,8 @@ public class GameManager : MonoBehaviour
         Bond b = generatedBond.AddComponent<Bond>();
         b.A1 = atom1;
         b.A2 = atom2;
+        b.A1Index = int.Parse(info[3]);
+        b.A2Index = int.Parse(info[5]);
         b.Type = btype;
         Atom at1 = atom1.GetComponent<Atom>();
         at1.addBond(generatedBond);
@@ -420,7 +436,7 @@ public class GameManager : MonoBehaviour
             
             foreach (GameObject molecule in molecules)
             {
-
+                if (molecule == null) continue;
                 for (int i = 0; i < molecule.transform.childCount; i++)
                 {
                     GameObject child = molecule.transform.GetChild(i).gameObject;
@@ -449,6 +465,7 @@ public class GameManager : MonoBehaviour
         {
             foreach(GameObject molecule in molecules)
             {
+                if (molecule == null) continue;
                 molecule.GetComponent<MoleculesAction>().DisableAllComponent();
             }
             GameObject.FindGameObjectWithTag("EventManager").GetComponent<TestUIManager>().enterTestButton.GetComponent<Button>().interactable = true;
@@ -539,6 +556,30 @@ public class GameManager : MonoBehaviour
 
         Atom1Info.UpdateMaxBond();
         Atom2Info.UpdateMaxBond();
+
+    }
+
+    public static bool MoleculeMatch(int level, ref string type)
+    {
+        
+        string smiles = Recognizer.generateSMILES(selectedComponent);
+        print(smiles);
+
+        if (Config.SmilesTable[level].Contains(smiles))
+        {
+            if (level == 2)
+            {
+                int index = Config.SmilesTable[level].IndexOf(smiles);
+                if (index < 2) type = "邻甲基苯酚";
+                else if (index < 4) type = "间甲基苯酚";
+                else if (index < 5) type = "对甲基苯酚";
+                else if (index < 7) type = "苯甲醇";
+                else type = "苯甲醚";
+            }
+            return true;
+        }
+        else
+            return false;
 
     }
 }

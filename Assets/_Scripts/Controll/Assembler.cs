@@ -96,7 +96,7 @@ public class Assembler : MonoBehaviour
         GameObject otherMole = otherAtom.transform.parent.gameObject;
         if(selfMole == otherMole)
         {
-            //两原子已经通过单键连接，直接返回不做操作。
+            //两原子已经通过单键连接，直接返回不做操作
             if (StructureUtil.IsAdjacent(gameObject, otherAtom))
                 return;
             else
@@ -122,8 +122,10 @@ public class Assembler : MonoBehaviour
         Dictionary<GameObject, GameObject> parent = new Dictionary<GameObject, GameObject>();
 
         visited.Add(atom1);
+
         bool found = false;
-        while (st.Count != 0)
+       
+        while (st.Count > 0)
         {
             GameObject par = st.Pop();
             foreach(GameObject bond in par.GetComponent<Atom>().Bonds)
@@ -135,6 +137,7 @@ public class Assembler : MonoBehaviour
                     if (visited.Contains(adj)) continue;
                     parent.Add(adj, par);
                     if (adj == atom2)
+
                     {
                         found = true;
                         goto end;
@@ -155,6 +158,7 @@ public class Assembler : MonoBehaviour
                 path.Add(parent[cur]);
                 cur = parent[cur];
             }
+            
         }
         return path;
     }
@@ -440,6 +444,9 @@ public class Assembler : MonoBehaviour
                 return;
         }
 
+
+        
+
         Renderer[] renderers = bond.GetComponentsInChildren<Renderer>();
         foreach(var v in renderers)
         {
@@ -498,6 +505,7 @@ public class Assembler : MonoBehaviour
         b.A1Index = a1Index;
         b.A2Index = a2Index;
         b.Type = bondType;
+        b.InRing = onRing;
         a1.addBond(bond);
         a2.addBond(bond);
     }
@@ -610,7 +618,6 @@ public class Assembler : MonoBehaviour
         b.A2 = a2.gameObject;
         b.A1Index = catomBondIndex;
         b.A2Index = selfBondIndex;
-        print(sbond.GetComponent<Bond>().toString());
         b.Type = BondType.SINGLE;
         a1.addBond(sbond);
         a2.addBond(sbond);
