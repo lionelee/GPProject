@@ -139,7 +139,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public static void GenerateAtom(string symbol, int valence)
+    public static GameObject GenerateAtom(string symbol, int valence)
     {
         GameObject newComponentPos = GameObject.FindGameObjectWithTag("NewComponentPos");
         // clear atoms in component area
@@ -164,7 +164,7 @@ public class GameManager : MonoBehaviour
         {
             generatedAtom = Instantiate(prefebOxygen);
         }
-        else return;
+        else return null;
 
         Atom atom = generatedAtom.AddComponent<Atom>();
         atom.Id = mole.GetComponent<Molecule>().CurrentAtomId++;
@@ -173,6 +173,7 @@ public class GameManager : MonoBehaviour
         atom.vbonds = new List<Vector4>(Config.BondAngleTable[symbol]);
         generatedAtom.transform.parent = mole.transform;
         generatedAtom.transform.Translate(mole.transform.position - generatedAtom.transform.position);
+        return generatedAtom;
     }
     #endregion
 

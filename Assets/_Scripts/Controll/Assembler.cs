@@ -90,17 +90,14 @@ public class Assembler : MonoBehaviour
         Atom a1 = atom1.GetComponent<Atom>();
         Atom a2 = atom2.GetComponent<Atom>();
         st.Push(atom1);
-
-        int atomN = atom1.transform.parent.GetComponent<Molecule>().AtomNum;
+        
         List<GameObject> visited = new List<GameObject>();
-        GameObject[] parent = new GameObject[atomN]; 
+        Dictionary<int, GameObject> parent = new Dictionary<int, GameObject>();
         visited.Add(atom1);
-        for (int i = 0; i < atomN; ++i)
-            parent[i] = null;
         int aid = a1.Id;
         bool found = false;
        
-        while (st.Count != 0)
+        while (st.Count > 0)
         {
             GameObject par = st.Pop();
             foreach(GameObject bond in par.GetComponent<Atom>().Bonds)
@@ -111,17 +108,14 @@ public class Assembler : MonoBehaviour
                     GameObject adj = b.getAdjacent(par);
                     aid = adj.GetComponent<Atom>().Id;
                     if (visited.Contains(adj)) continue;
-                    parent[aid] = par;
+                    parent.Add(aid, par);
                     if (aid == a2.Id)
                     {
                         found = true;
                         goto end;
                     }
-                    if (!visited.Contains(adj))
-                    {
-                        visited.Add(adj);
-                        st.Push(adj);
-                    }
+                    visited.Add(adj);
+                    st.Push(adj);
                 }
             }
         }
