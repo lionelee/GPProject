@@ -60,7 +60,7 @@ public class ButtonEvents : MonoBehaviour {
     {
         AtomNumCanvas.SetActive(false);
 
-
+        GameManager.GenerateSimplePrefab(type);
     }
 
     public void OnCanvasCloseButtonClick(GameObject canvas)

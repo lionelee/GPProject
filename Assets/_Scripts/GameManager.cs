@@ -24,13 +24,24 @@ public class GameManager : MonoBehaviour
     static public GameObject prefebCarbon;
     static public GameObject prefebHydrogen;
     static public GameObject prefebOxygen;
+    static public GameObject prefebNitrogen;
+    static public GameObject prefebSulfur;
     static public GameObject prefebSingleBond;
     static public GameObject prefebDoubleBond;
     static public GameObject prefebTrippleBond;
 
     //complex prefabs
     static public GameObject prefebCRing3;
+    static public GameObject prefebCRing4;
+    static public GameObject prefebCRing5;
+    static public GameObject prefebCRing6;
 
+    static public GameObject prefebCChain3;
+    static public GameObject prefebCChain4;
+    static public GameObject prefebCChain5;
+    static public GameObject prefebCChain6;
+
+    static public GameObject prefebBenzene;
 
     // Use this for initialization
     void Start()
@@ -45,12 +56,23 @@ public class GameManager : MonoBehaviour
         prefebCarbon = (GameObject)Resources.Load("_Prefebs/Carbon") as GameObject;
         prefebHydrogen = (GameObject)Resources.Load("_Prefebs/Hydrogen") as GameObject;
         prefebOxygen = (GameObject)Resources.Load("_Prefebs/Oxygen") as GameObject;
+        prefebNitrogen = (GameObject)Resources.Load("_Prefebs/Nitrogen") as GameObject;
+        prefebSulfur = (GameObject)Resources.Load("_Prefebs/Sulfur") as GameObject;
         prefebSingleBond = (GameObject)Resources.Load("_Prefebs/SingleBond") as GameObject;
         prefebDoubleBond = (GameObject)Resources.Load("_Prefebs/DoubleBond") as GameObject;
         prefebTrippleBond = (GameObject)Resources.Load("_Prefebs/TrippleBond") as GameObject;
 
         prefebCRing3 = (GameObject)Resources.Load("_Prefebs/CRing3") as GameObject;
+        prefebCRing4 = (GameObject)Resources.Load("_Prefebs/CRing4") as GameObject;
+        prefebCRing5 = (GameObject)Resources.Load("_Prefebs/CRing5") as GameObject;
+        prefebCRing6 = (GameObject)Resources.Load("_Prefebs/CRing6") as GameObject;
 
+        prefebCChain3 = (GameObject)Resources.Load("_Prefebs/CChain3") as GameObject;
+        prefebCChain4 = (GameObject)Resources.Load("_Prefebs/CChain4") as GameObject;
+        prefebCChain5 = (GameObject)Resources.Load("_Prefebs/CChain5") as GameObject;
+        prefebCChain6 = (GameObject)Resources.Load("_Prefebs/CChain6") as GameObject;
+
+        prefebBenzene = (GameObject)Resources.Load("_Prefebs/Benzene") as GameObject;
     }
 
     // Update is called once per frame
@@ -170,6 +192,14 @@ public class GameManager : MonoBehaviour
         {
             generatedAtom = Instantiate(prefebOxygen);
         }
+        else if (symbol == "N")
+        {
+            generatedAtom = Instantiate(prefebNitrogen);
+        }
+        else if (symbol == "S")
+        {
+            generatedAtom = Instantiate(prefebSulfur);
+        }
         else return;
 
         Atom atom = generatedAtom.AddComponent<Atom>();
@@ -200,10 +230,13 @@ public class GameManager : MonoBehaviour
                     molecule = Instantiate(prefebCRing3);
                     break;
                 case 4:
+                    molecule = Instantiate(prefebCRing4);
                     break;
                 case 5:
+                    molecule = Instantiate(prefebCRing5);
                     break;
                 case 6:
+                    molecule = Instantiate(prefebCRing6);
                     break;
             }
         } else if(type == "CChain")
@@ -211,14 +244,38 @@ public class GameManager : MonoBehaviour
             switch (num)
             {
                 case 3:
+                    molecule = Instantiate(prefebCChain3);
                     break;
                 case 4:
+                    molecule = Instantiate(prefebCChain4);
                     break;
                 case 5:
+                    molecule = Instantiate(prefebCChain5);
                     break;
                 case 6:
+                    molecule = Instantiate(prefebCChain6);
                     break;
             }
+        }
+
+        molecule.transform.parent = newComponentPos.transform;
+        molecule.transform.Translate(newComponentPos.transform.position - molecule.transform.position);
+
+        molecules.Add(molecule);
+    }
+
+    public static void GenerateSimplePrefab(string type)
+    {
+        GameObject newComponentPos = GameObject.FindGameObjectWithTag("NewComponentPos");
+        // clear atoms in component area
+        for (int i = 0; i < newComponentPos.transform.childCount; i++)
+            DestroyObject(newComponentPos.transform.GetChild(i).gameObject);
+
+        GameObject molecule = null;
+
+        if (type == "Ben")
+        {
+            molecule = Instantiate(prefebBenzene);
         }
 
         molecule.transform.parent = newComponentPos.transform;
@@ -386,13 +443,16 @@ public class GameManager : MonoBehaviour
 
             GameObject.FindGameObjectWithTag("EventManager").GetComponent<UiDisplayController>().ShowSelectAtomCanvas(false);
             GameObject.FindGameObjectWithTag("EventManager").GetComponent<UiDisplayController>().ShowPrefabCanvas(false);
+            GameObject.FindGameObjectWithTag("EventManager").GetComponent<TestUIManager>().enterTestButton.GetComponent<Button>().interactable = false;
+            GameObject.FindGameObjectWithTag("EventManager").GetComponent<TestUIManager>().confirmButton.GetComponent<Button>().interactable = true;
         } else
         {
             foreach(GameObject molecule in molecules)
             {
                 molecule.GetComponent<MoleculesAction>().DisableAllComponent();
             }
-
+            GameObject.FindGameObjectWithTag("EventManager").GetComponent<TestUIManager>().enterTestButton.GetComponent<Button>().interactable = true;
+            GameObject.FindGameObjectWithTag("EventManager").GetComponent<TestUIManager>().confirmButton.GetComponent<Button>().interactable = false;
         }
     }
 

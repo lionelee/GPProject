@@ -8,14 +8,14 @@ public enum BondType
 }
 
 public class Bond : MonoBehaviour{
-    public GameObject A1 { get; set; }
-    public GameObject A2 { get; set; }
+    public GameObject A1;
+    public GameObject A2;
 
-    public int A1Index { get; set; }
-    public int A2Index { get; set; }
+    public int A1Index;
+    public int A2Index;
     
-    public BondType Type { get; set; }
-    public bool InRing { get; set; }
+    public BondType Type;
+    public bool InRing;
 
     public GameObject getAdjacent(GameObject from)
     {

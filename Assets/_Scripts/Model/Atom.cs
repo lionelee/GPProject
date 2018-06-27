@@ -7,13 +7,13 @@ public class Atom : MonoBehaviour
     //max size is 117 scale 0.6
     //const float scale = 1.0f;
 
-    public int Id { set; get; }
+    public int Id;
 
-    public string Symbol { set; get; }
-    public int Valence { set; get; }
-	public int Connected { set; get; }
-    public bool InRing { set; get; }
-    public BondType MaxBomdType { set; get;}
+    public string Symbol;
+    public int Valence;
+	public int Connected;
+    public bool InRing;
+    public BondType MaxBomdType;
     public List<Vector4> vbonds;
 	public List<GameObject> Bonds;
 

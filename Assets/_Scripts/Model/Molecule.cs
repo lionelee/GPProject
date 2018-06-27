@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class Molecule : MonoBehaviour
 {    
-    public int Id { set; get; }
-    public int CurrentAtomId { set; get; }
-    public int AtomNum { set; get; }
+    public int Id;
+    public int CurrentAtomId;
+    public int AtomNum;
     
     public Molecule(int id)
     {

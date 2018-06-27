@@ -65,6 +65,7 @@ public class MoleculesAction : VRTK_InteractableObject
     public override void StartUsing(VRTK_InteractUse usingObject)
     {
         base.StartUsing(usingObject);
+        GameManager.SetSelectedComponent(gameObject);
         GameManager.SetRotatableMole(gameObject);
         GameManager.SwitchMode(InteracteMode.SELECT);
     }
